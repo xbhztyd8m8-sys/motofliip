@@ -291,10 +291,27 @@ export default function Home() {
         fontSize: '13px',
         fontFamily: 'monospace',
       }}>
-        © 2026 MotoFlip · Built for flippers, by flippers
+        <footer style={{
+  borderTop: '1px solid #1a1a1a',
+  padding: '2rem',
+  textAlign: 'center',
+  color: '#333',
+  fontSize: '13px',
+  fontFamily: 'monospace',
+}}>
+  <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+    <a href="/faq" style={{ color: '#555', textDecoration: 'none' }}>FAQ</a>
+    <a href="/privacy" style={{ color: '#555', textDecoration: 'none' }}>Privacy Policy</a>
+    <a href="/terms" style={{ color: '#555', textDecoration: 'none' }}>Terms of Service</a>
+    <a href="mailto:support@motofliip.com" style={{ color: '#555', textDecoration: 'none' }}>Support</a>
+  </div>
+  <div>© 2026 MotoFlip · Built for flippers, by flippers</div>
+</footer>
       </footer>
 
     </main>
   );
 }
+
+
 

@@ -121,17 +121,26 @@ export default function Dashboard() {
         padding: '1rem 2rem', borderBottom: '1px solid #1a1a1a',
         position: 'sticky', top: 0, background: '#0a0a0a', zIndex: 100,
       }}>
-        <div style={{ fontSize: '16px', fontWeight: '700', fontFamily: 'Georgia, serif' }}>🏍️ MotoFlip</div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <div style={{ fontSize: '13px', color: '#555', padding: '6px 12px' }}>Free plan · 5 analyses/mo</div>
-          <button
-            onClick={handleUpgrade}
-            disabled={upgrading}
-            style={{ background: '#e8ff47', color: '#0a0a0a', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: '700', fontFamily: 'monospace', cursor: 'pointer', border: 'none' }}
-          >
-            {upgrading ? 'Loading...' : 'Upgrade to Pro'}
-          </button>
-        </div>
+<div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+  <div style={{ fontSize: '13px', color: '#555', padding: '6px 12px' }}>Free plan · 5 analyses/mo</div>
+  <button
+    onClick={handleUpgrade}
+    disabled={upgrading}
+    style={{ background: '#e8ff47', color: '#0a0a0a', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: '700', fontFamily: 'monospace', cursor: 'pointer', border: 'none' }}
+  >
+    {upgrading ? 'Loading...' : 'Upgrade to Pro'}
+  </button>
+  <button
+    onClick={async () => {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      window.location.href = '/';
+    }}
+    style={{ background: 'transparent', color: '#555', border: '1px solid #222', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', fontFamily: 'monospace' }}
+  >
+    Sign out
+  </button>
+</div>
       </div>
 
       <div style={{ maxWidth: '860px', margin: '0 auto', padding: '2rem 1.5rem' }}>
