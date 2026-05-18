@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { createClient } from '@/lib/supabase';
 
 const MAKES = ['Honda','Yamaha','Kawasaki','Suzuki','Harley-Davidson','BMW','KTM','Ducati','Triumph','Royal Enfield','Indian','Other'];
 const CONDITIONS = ['Excellent','Good','Fair','Poor / project','Non-running'];
@@ -37,8 +38,27 @@ export default function Dashboard() {
   const [pipeline, setPipeline] = useState([]);
   const [tab, setTab] = useState('analyze');
   const [addedIds, setAddedIds] = useState(new Set());
+  const [upgrading, setUpgrading] = useState(false);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  async function handleUpgrade() {
+    setUpgrading(true);
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user?.email || '' }),
+      });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+    } catch (e) {
+      console.error(e);
+    }
+    setUpgrading(false);
+  }
 
   async function analyze() {
     if (!form.make || !form.model || !form.price) {
@@ -102,9 +122,15 @@ export default function Dashboard() {
         position: 'sticky', top: 0, background: '#0a0a0a', zIndex: 100,
       }}>
         <div style={{ fontSize: '16px', fontWeight: '700', fontFamily: 'Georgia, serif' }}>🏍️ MotoFlip</div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <div style={{ fontSize: '13px', color: '#555', padding: '6px 12px' }}>Free plan · 5 analyses/mo</div>
-          <div style={{ background: '#e8ff47', color: '#0a0a0a', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: '700', fontFamily: 'monospace', cursor: 'pointer' }}>Upgrade to Pro</div>
+          <button
+            onClick={handleUpgrade}
+            disabled={upgrading}
+            style={{ background: '#e8ff47', color: '#0a0a0a', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: '700', fontFamily: 'monospace', cursor: 'pointer', border: 'none' }}
+          >
+            {upgrading ? 'Loading...' : 'Upgrade to Pro'}
+          </button>
         </div>
       </div>
 
@@ -162,13 +188,10 @@ export default function Dashboard() {
               <label style={labelStyle}>DESCRIPTION / NOTES</label>
               <textarea
                 style={{ ...inputStyle, minHeight: '90px', resize: 'vertical', lineHeight: '1.6' }}
-                placeholder="Paste the listing description, or add your own notes — motivated seller? recent repairs? missing title? anything unusual?"
+                placeholder="Paste the listing description, or add your own notes..."
                 value={form.description}
                 onChange={e => set('description', e.target.value)}
               />
-              <div style={{ fontSize: '11px', color: '#444', marginTop: '5px', fontFamily: 'monospace' }}>
-                Tip: more detail = better analysis. Paste the full listing if you can.
-              </div>
             </div>
 
             {error && <div style={{ color: '#f87171', fontSize: '13px', marginBottom: '12px' }}>{error}</div>}
@@ -182,7 +205,7 @@ export default function Dashboard() {
                   color: loading ? '#555' : '#0a0a0a',
                   border: 'none', padding: '12px 24px', borderRadius: '8px',
                   fontSize: '14px', fontWeight: '700', cursor: loading ? 'not-allowed' : 'pointer',
-                  fontFamily: 'monospace', letterSpacing: '0.02em',
+                  fontFamily: 'monospace',
                 }}
               >
                 {loading ? 'Analyzing...' : 'Analyze flip potential →'}
