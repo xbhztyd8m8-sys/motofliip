@@ -268,7 +268,7 @@ export default function Home() {
               padding: '3px 12px', borderRadius: '999px', fontFamily: 'monospace', letterSpacing: '0.06em',
             }}>MOST POPULAR</div>
             <div style={{ fontSize: '13px', color: '#e8ff47', fontFamily: 'monospace', marginBottom: '6px' }}>PRO</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '4px' }}>$12</div>
+            <div style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '4px' }}>$9</div>
             <div style={{ fontSize: '13px', color: '#555', marginBottom: '1.5rem' }}>per month</div>
             {['Unlimited analyses', 'Unlimited pipeline', 'Chrome extension', 'Market comps view', 'Profit tracking + sold log'].map(f => (
               <div key={f} style={{ fontSize: '13px', color: '#ccc', marginBottom: '8px', fontFamily: 'sans-serif' }}>✓ {f}</div>
@@ -291,7 +291,7 @@ export default function Home() {
         fontSize: '13px',
         fontFamily: 'monospace',
       }}>
-        © 2025 MotoFlip · Built for flippers, by flippers
+        © 2026 MotoFlip · Built for flippers, by flippers
       </footer>
 
     </main>
