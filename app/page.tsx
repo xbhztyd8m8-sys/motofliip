@@ -26,15 +26,21 @@ export default function Home() {
           <a href="#how" style={{ color: '#888', fontSize: '14px', textDecoration: 'none' }}>How it works</a>
           <a href="#pricing" style={{ color: '#888', fontSize: '14px', textDecoration: 'none' }}>Pricing</a>
           <a href="/login" style={{
+            color: '#888',
+            fontSize: '14px',
+            textDecoration: 'none',
+          }}>Log in</a>
+          <a href="/signup" className="mf-cta-primary" style={{
             background: '#e8ff47',
             color: '#0a0a0a',
-            padding: '8px 18px',
+            padding: '9px 20px',
             borderRadius: '6px',
             fontSize: '14px',
             fontWeight: '700',
             textDecoration: 'none',
             fontFamily: 'monospace',
             letterSpacing: '0.02em',
+            boxShadow: '0 0 24px rgba(232,255,71,0.15)',
           }}>Get started →</a>
         </div>
       </nav>
