@@ -1,26 +1,161 @@
 @import "tailwindcss";
 
+/* ---------- MotoFlip design tokens ---------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --mf-bg: #0a0a0a;
+  --mf-fg: #f0ede6;
+  --mf-accent: #e8ff47;
+  --mf-muted: #888;
+  --mf-border: #1e1e1e;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+* { box-sizing: border-box; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--mf-bg);
+  color: var(--mf-fg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}
+
+/* ---------- Hover micro-animations ---------- */
+.mf-btn-primary,
+.mf-cta-primary,
+.mf-btn-ghost {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease,
+    background 0.15s ease,
+    border-color 0.15s ease,
+    filter 0.15s ease;
+  will-change: transform;
+}
+
+.mf-btn-primary:hover,
+.mf-cta-primary:hover {
+  transform: translateY(-1px) scale(1.02);
+  filter: brightness(1.05);
+  box-shadow: 0 8px 28px rgba(232, 255, 71, 0.25);
+}
+
+.mf-btn-primary:active,
+.mf-cta-primary:active {
+  transform: translateY(0) scale(0.99);
+  filter: brightness(0.98);
+}
+
+.mf-btn-ghost:hover {
+  border-color: #444 !important;
+  background: #131313 !important;
+}
+
+.mf-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.mf-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  border-color: #2a2a2a !important;
+}
+
+.mf-link {
+  transition: color 0.15s ease;
+}
+
+.mf-link:hover {
+  color: var(--mf-fg) !important;
+}
+
+/* ---------- Focus visibility ---------- */
+:focus-visible {
+  outline: 2px solid var(--mf-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- Responsive grid utilities ----------
+   Inline styles can't host media queries, so the few grids that need to
+   collapse on mobile use these classes instead of inline gridTemplateColumns. */
+.mf-grid-2,
+.mf-grid-3,
+.mf-grid-4 {
+  display: grid;
+  gap: 12px;
+}
+.mf-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.mf-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.mf-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* ---------- Mobile breakpoint (≤ 640px) ---------- */
+@media (max-width: 640px) {
+  .mf-grid-2,
+  .mf-grid-3 {
+    grid-template-columns: 1fr;
+  }
+  /* Stat strips stay readable in 2 columns rather than collapsing to 1 */
+  .mf-grid-4,
+  .mf-stats-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* Hide the in-nav anchor links on phones; CTA stays visible */
+  .mf-nav-links {
+    display: none !important;
+  }
+  /* Tighter horizontal padding on hero / sections */
+  .mf-section {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+  /* Dashboard sticky topbar tightens up */
+  .mf-topbar {
+    padding: 0.75rem 1rem !important;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  /* Plan-badge text hides on tiny screens to keep the topbar in one row */
+  .mf-plan-badge {
+    display: none !important;
+  }
+}
+
+/* ---------- Celebration banner entrance ---------- */
+@keyframes mf-celebrate-in {
+  0%   { opacity: 0; transform: translateY(-6px) scale(0.99); }
+  100% { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+.mf-celebration {
+  animation: mf-celebrate-in 0.45s ease-out both;
+}
+
+/* ---------- Touch devices: kill sticky :hover state ---------- */
+@media (hover: none) {
+  .mf-btn-primary:hover,
+  .mf-cta-primary:hover,
+  .mf-btn-ghost:hover,
+  .mf-card:hover {
+    transform: none;
+    box-shadow: none;
+    filter: none;
+  }
+}
+
+/* ---------- Respect reduced-motion preference ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
 }

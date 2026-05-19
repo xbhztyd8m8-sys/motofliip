@@ -22,14 +22,16 @@ export default function Home() {
         <div style={{ fontSize: '1.25rem', fontWeight: '700', letterSpacing: '-0.02em' }}>
           🏍️ MotoFlip
         </div>
-        <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          <a href="#how" style={{ color: '#888', fontSize: '14px', textDecoration: 'none' }}>How it works</a>
-          <a href="#pricing" style={{ color: '#888', fontSize: '14px', textDecoration: 'none' }}>Pricing</a>
-          <a href="/login" style={{
-            color: '#888',
-            fontSize: '14px',
-            textDecoration: 'none',
-          }}>Log in</a>
+        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+          <div className="mf-nav-links" style={{ display: 'flex', gap: '1.75rem', alignItems: 'center' }}>
+            <a href="#how" className="mf-link" style={{ color: '#888', fontSize: '14px', textDecoration: 'none' }}>How it works</a>
+            <a href="#pricing" className="mf-link" style={{ color: '#888', fontSize: '14px', textDecoration: 'none' }}>Pricing</a>
+            <a href="/login" className="mf-link" style={{
+              color: '#888',
+              fontSize: '14px',
+              textDecoration: 'none',
+            }}>Log in</a>
+          </div>
           <a href="/signup" className="mf-cta-primary" style={{
             background: '#e8ff47',
             color: '#0a0a0a',
@@ -46,10 +48,10 @@ export default function Home() {
       </nav>
 
       {/* HERO */}
-      <section style={{
+      <section className="mf-section" style={{
         maxWidth: '900px',
         margin: '0 auto',
-        padding: '6rem 2rem 4rem',
+        padding: '5rem 2rem 3.5rem',
         textAlign: 'center',
       }}>
         <div style={{
@@ -92,7 +94,7 @@ export default function Home() {
         </p>
 
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <a href="/signup" style={{
+          <a href="/signup" className="mf-btn-primary" style={{
             background: '#e8ff47',
             color: '#0a0a0a',
             padding: '14px 28px',
@@ -104,7 +106,7 @@ export default function Home() {
           }}>
             Try free — no card needed
           </a>
-          <a href="#how" style={{
+          <a href="#how" className="mf-btn-ghost" style={{
             background: 'transparent',
             color: '#f0ede6',
             padding: '14px 28px',
@@ -119,10 +121,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAKE EXTENSION PREVIEW */}
-      <section style={{
+      {/* EXTENSION PREVIEW MOCK */}
+      <section className="mf-section" style={{
         maxWidth: '500px',
-        margin: '0 auto 6rem',
+        margin: '0 auto 5rem',
         padding: '0 2rem',
       }}>
         <div style={{
@@ -202,7 +204,7 @@ export default function Home() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section id="how" style={{
+      <section id="how" className="mf-section" style={{
         maxWidth: '860px',
         margin: '0 auto',
         padding: '4rem 2rem',
@@ -218,7 +220,7 @@ export default function Home() {
             { n: '03', title: 'Get your flip score', body: 'See the flip score, suggested offer price, estimated profit, and any red flags — in about 2 seconds.' },
             { n: '04', title: 'Save the best ones', body: 'Add hot listings to your pipeline. Track everything in one dashboard. Never lose a deal.' },
           ].map(({ n, title, body }) => (
-            <div key={n} style={{
+            <div key={n} className="mf-card" style={{
               background: '#111',
               border: '1px solid #1e1e1e',
               borderRadius: '12px',
@@ -233,17 +235,17 @@ export default function Home() {
       </section>
 
       {/* PRICING */}
-      <section id="pricing" style={{
+      <section id="pricing" className="mf-section" style={{
         maxWidth: '760px',
         margin: '0 auto',
         padding: '4rem 2rem',
         borderTop: '1px solid #1a1a1a',
       }}>
-        <h2 style={{ fontSize: '2rem', fontWeight: '700', textAlign: 'center', marginBottom: '3rem', letterSpacing: '-0.02em' }}>
+        <h2 style={{ fontSize: 'clamp(1.75rem, 5vw, 2rem)', fontWeight: '700', textAlign: 'center', marginBottom: '3rem', letterSpacing: '-0.02em' }}>
           Simple pricing
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          <div style={{
+        <div className="mf-grid-2" style={{ gap: '1rem' }}>
+          <div className="mf-card" style={{
             background: '#111',
             border: '1px solid #1e1e1e',
             borderRadius: '12px',
@@ -255,13 +257,13 @@ export default function Home() {
             {['5 analyses per month', 'Pipeline up to 10 listings', 'Basic flip scores', 'Web app only'].map(f => (
               <div key={f} style={{ fontSize: '13px', color: '#888', marginBottom: '8px', fontFamily: 'sans-serif' }}>✓ {f}</div>
             ))}
-            <a href="/signup" style={{
+            <a href="/signup" className="mf-btn-ghost" style={{
               display: 'block', textAlign: 'center', marginTop: '1.5rem',
               border: '1px solid #2a2a2a', color: '#f0ede6', padding: '10px',
               borderRadius: '7px', textDecoration: 'none', fontSize: '14px',
             }}>Get started free</a>
           </div>
-          <div style={{
+          <div className="mf-card" style={{
             background: '#111',
             border: '2px solid #e8ff47',
             borderRadius: '12px',
@@ -279,7 +281,7 @@ export default function Home() {
             {['Unlimited analyses', 'Unlimited pipeline', 'Chrome extension', 'Market comps view', 'Profit tracking + sold log'].map(f => (
               <div key={f} style={{ fontSize: '13px', color: '#ccc', marginBottom: '8px', fontFamily: 'sans-serif' }}>✓ {f}</div>
             ))}
-            <a href="/signup?plan=pro" style={{
+            <a href="/signup?plan=pro" className="mf-btn-primary" style={{
               display: 'block', textAlign: 'center', marginTop: '1.5rem',
               background: '#e8ff47', color: '#0a0a0a', padding: '10px',
               borderRadius: '7px', textDecoration: 'none', fontSize: '14px', fontWeight: '700', fontFamily: 'monospace',
@@ -291,28 +293,22 @@ export default function Home() {
       {/* FOOTER */}
       <footer style={{
         borderTop: '1px solid #1a1a1a',
-        padding: '2rem',
+        padding: '2rem 1.5rem',
         textAlign: 'center',
         color: '#333',
         fontSize: '13px',
         fontFamily: 'monospace',
       }}>
-        <footer style={{
-  borderTop: '1px solid #1a1a1a',
-  padding: '2rem',
-  textAlign: 'center',
-  color: '#333',
-  fontSize: '13px',
-  fontFamily: 'monospace',
-}}>
-  <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-    <a href="/faq" style={{ color: '#555', textDecoration: 'none' }}>FAQ</a>
-    <a href="/privacy" style={{ color: '#555', textDecoration: 'none' }}>Privacy Policy</a>
-    <a href="/terms" style={{ color: '#555', textDecoration: 'none' }}>Terms of Service</a>
-    <a href="mailto:support@motofliip.com" style={{ color: '#555', textDecoration: 'none' }}>Support</a>
-  </div>
-  <div>© 2026 MotoFlip · Built for flippers, by flippers</div>
-</footer>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '1.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+          <a href="/faq" className="mf-link" style={{ color: '#555', textDecoration: 'none' }}>FAQ</a>
+          <a href="/privacy" className="mf-link" style={{ color: '#555', textDecoration: 'none' }}>Privacy Policy</a>
+          <a href="/terms" className="mf-link" style={{ color: '#555', textDecoration: 'none' }}>Terms of Service</a>
+          <a href="mailto:support@motofliip.com" className="mf-link" style={{ color: '#555', textDecoration: 'none' }}>Support</a>
+        </div>
+        <div>© 2026 MotoFlip · Built for flippers, by flippers</div>
+        <div style={{ marginTop: '6px', color: '#2a2a2a' }}>
+          Made with <span style={{ color: '#7a1f1f' }}>♥</span> in Alabama
+        </div>
       </footer>
 
     </main>
