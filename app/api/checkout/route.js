@@ -42,7 +42,8 @@ export async function POST(request) {
 
     return Response.json({ url: session.url });
   } catch (error) {
-    console.error('Stripe error:', error);
-    return Response.json({ error: 'Failed to create checkout session' }, { status: 500 });
+    console.error('[checkout] Stripe error:', error);
+    // Return the real Stripe message so the dashboard can surface it
+    return Response.json({ error: error?.message || 'Failed to create checkout session' }, { status: 500 });
   }
 }
