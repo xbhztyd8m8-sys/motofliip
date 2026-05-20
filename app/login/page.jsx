@@ -8,9 +8,12 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [expiredLink, setExpiredLink] = useState(false);
 
   useEffect(() => {
     document.title = 'Log in · MotoFlip';
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('error') === 'expired') setExpiredLink(true);
   }, []);
 
   async function handleLogin() {
@@ -59,7 +62,10 @@ export default function Login() {
             onKeyDown={e => e.key === 'Enter' && handleLogin()}
           />
 
-          <label htmlFor="login-password" style={{ fontSize: '12px', color: '#555', fontFamily: 'monospace', letterSpacing: '0.04em' }}>PASSWORD</label>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
+            <label htmlFor="login-password" style={{ fontSize: '12px', color: '#555', fontFamily: 'monospace', letterSpacing: '0.04em' }}>PASSWORD</label>
+            <a href="/forgot-password" style={{ fontSize: '12px', color: '#666', textDecoration: 'none' }}>Forgot password?</a>
+          </div>
           <input
             id="login-password"
             style={inputStyle}
@@ -70,6 +76,12 @@ export default function Login() {
             onKeyDown={e => e.key === 'Enter' && handleLogin()}
           />
 
+          {expiredLink && (
+            <div style={{ background: '#1a1010', border: '1px solid #3a1a1a', borderRadius: '8px', padding: '10px 14px', marginBottom: '12px', fontSize: '13px', color: '#f87171', lineHeight: 1.6 }}>
+              That link has expired.{' '}
+              <a href="/forgot-password" style={{ color: '#e8ff47', textDecoration: 'none', fontWeight: '600' }}>Request a new one →</a>
+            </div>
+          )}
           {error && <div style={{ color: '#f87171', fontSize: '13px', marginBottom: '12px' }}>{error}</div>}
 
           <button

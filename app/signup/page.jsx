@@ -106,7 +106,7 @@ export default function Signup() {
             id="signup-name"
             style={inputStyle}
             type="text"
-            placeholder="Hudson Rukstalis"
+            placeholder="Your full name"
             value={name}
             onChange={e => setName(e.target.value)}
           />
@@ -137,7 +137,7 @@ export default function Signup() {
             id="signup-location"
             style={inputStyle}
             type="text"
-            placeholder="e.g. Birmingham, AL"
+            placeholder="e.g. Austin, TX"
             value={location}
             onChange={e => setLocation(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSignup()}
