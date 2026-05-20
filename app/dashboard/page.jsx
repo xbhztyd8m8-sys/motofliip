@@ -76,6 +76,9 @@ export default function Dashboard() {
 
   // Post-checkout celebration — runs once on mount if ?upgraded=true is set.
   // Clean the URL so a refresh doesn't re-trigger; auto-dismiss after 7s.
+  // Also re-fetch the user a couple of times to pick up the webhook-driven
+  // app_metadata.is_pro update (Stripe's webhook and the redirect to this
+  // page race; the webhook usually lands within a second or two).
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
@@ -84,8 +87,24 @@ export default function Dashboard() {
     params.delete('upgraded');
     const rest = params.toString();
     window.history.replaceState({}, '', window.location.pathname + (rest ? '?' + rest : ''));
-    const t = setTimeout(() => setShowUpgradeCelebration(false), 7000);
-    return () => clearTimeout(t);
+
+    const dismiss = setTimeout(() => setShowUpgradeCelebration(false), 7000);
+
+    let cancelled = false;
+    const refreshUser = async () => {
+      const supabase = createClient();
+      const { data: { user: fresh } } = await supabase.auth.getUser();
+      if (!cancelled && fresh) setUser(fresh);
+    };
+    const r1 = setTimeout(refreshUser, 2500);
+    const r2 = setTimeout(refreshUser, 7000);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(dismiss);
+      clearTimeout(r1);
+      clearTimeout(r2);
+    };
   }, []);
 
   // Auth guard — redirect anonymous users to /login
@@ -119,7 +138,7 @@ export default function Dashboard() {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user?.email || '' }),
+        body: JSON.stringify({ email: user?.email || '', userId: user?.id }),
       });
       const data = await res.json();
       if (data.url) window.location.href = data.url;
@@ -179,6 +198,7 @@ export default function Dashboard() {
   if (authLoading) return <AuthLoading />;
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || 'rider';
+  const isPro = !!user?.app_metadata?.is_pro;
   const showOnboarding = !onboardingDismissed && !result && pipeline.length === 0 && tab === 'analyze';
 
   const avgProfit = pipeline.length ? Math.round(pipeline.reduce((s, p) => s + p.estimated_profit, 0) / pipeline.length) : 0;
@@ -216,17 +236,31 @@ export default function Dashboard() {
           </div>
         </div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div className="mf-plan-badge" style={{ fontSize: '13px', color: '#555', padding: '6px 12px', fontFamily: 'monospace' }}>
-            Free plan · 5 analyses/mo
-          </div>
-          <button
-            onClick={handleUpgrade}
-            disabled={upgrading}
-            className="mf-btn-primary"
-            style={{ background: '#e8ff47', color: '#0a0a0a', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: '700', fontFamily: 'monospace', cursor: 'pointer', border: 'none' }}
-          >
-            {upgrading ? 'Loading…' : 'Upgrade to Pro'}
-          </button>
+          {isPro ? (
+            <div className="mf-plan-badge" style={{
+              fontSize: '12px', fontWeight: 700, fontFamily: 'monospace',
+              letterSpacing: '0.08em',
+              padding: '5px 11px', borderRadius: '999px',
+              background: '#1a2e1a', color: '#4ade80',
+              border: '1px solid #2a4a2a',
+            }}>
+              PRO · UNLIMITED
+            </div>
+          ) : (
+            <>
+              <div className="mf-plan-badge" style={{ fontSize: '13px', color: '#555', padding: '6px 12px', fontFamily: 'monospace' }}>
+                Free plan · 5 analyses/mo
+              </div>
+              <button
+                onClick={handleUpgrade}
+                disabled={upgrading}
+                className="mf-btn-primary"
+                style={{ background: '#e8ff47', color: '#0a0a0a', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: '700', fontFamily: 'monospace', cursor: 'pointer', border: 'none' }}
+              >
+                {upgrading ? 'Loading…' : 'Upgrade to Pro'}
+              </button>
+            </>
+          )}
           <button
             onClick={handleSignOut}
             className="mf-btn-ghost"
