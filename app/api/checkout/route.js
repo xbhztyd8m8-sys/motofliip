@@ -10,6 +10,14 @@ export async function POST(request) {
       return Response.json({ error: 'Not authenticated' }, { status: 400 });
     }
 
+    if (!process.env.STRIPE_PRO_PRICE_ID) {
+      console.error('[checkout] STRIPE_PRO_PRICE_ID is not set');
+      return Response.json({ error: 'Checkout not configured (missing price ID).' }, { status: 500 });
+    }
+
+    // Fall back to the request origin so the success/cancel URLs are never "undefined/..."
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'subscription',
@@ -28,8 +36,8 @@ export async function POST(request) {
       subscription_data: {
         metadata: { supabase_user_id: userId },
       },
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard?upgraded=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
+      success_url: `${siteUrl}/dashboard?upgraded=true`,
+      cancel_url: `${siteUrl}/dashboard`,
     });
 
     return Response.json({ url: session.url });

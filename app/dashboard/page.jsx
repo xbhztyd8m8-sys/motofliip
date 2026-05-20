@@ -71,6 +71,7 @@ export default function Dashboard() {
   const [tab, setTab] = useState('analyze');
   const [addedIds, setAddedIds] = useState(new Set());
   const [upgrading, setUpgrading] = useState(false);
+  const [upgradeError, setUpgradeError] = useState('');
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
   const [showUpgradeCelebration, setShowUpgradeCelebration] = useState(false);
   const [dotCount, setDotCount] = useState(0);
@@ -169,6 +170,7 @@ export default function Dashboard() {
 
   async function handleUpgrade() {
     setUpgrading(true);
+    setUpgradeError('');
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
@@ -176,9 +178,15 @@ export default function Dashboard() {
         body: JSON.stringify({ email: user?.email || '', userId: user?.id }),
       });
       const data = await res.json();
-      if (data.url) window.location.href = data.url;
+      if (data.url) {
+        window.location.href = data.url;
+        return; // keep upgrading=true while navigating away
+      }
+      // API returned an error object
+      setUpgradeError(data.error || 'Something went wrong. Please try again.');
     } catch (e) {
-      console.error(e);
+      console.error('[upgrade]', e);
+      setUpgradeError('Could not reach checkout. Check your connection and try again.');
     }
     setUpgrading(false);
   }
@@ -296,10 +304,15 @@ export default function Dashboard() {
                 onClick={handleUpgrade}
                 disabled={upgrading}
                 className="mf-btn-primary"
-                style={{ background: '#e8ff47', color: '#0a0a0a', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: '700', fontFamily: 'monospace', cursor: 'pointer', border: 'none' }}
+                style={{ background: '#e8ff47', color: '#0a0a0a', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: '700', fontFamily: 'monospace', cursor: upgrading ? 'not-allowed' : 'pointer', border: 'none' }}
               >
                 {upgrading ? 'Loading…' : 'Upgrade to Pro'}
               </button>
+              {upgradeError && (
+                <div style={{ fontSize: '12px', color: '#f87171', maxWidth: '220px', lineHeight: 1.5 }}>
+                  {upgradeError}
+                </div>
+              )}
             </>
           )}
           <button
