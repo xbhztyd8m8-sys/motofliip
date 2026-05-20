@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 // when the element enters the viewport, triggering the .mf-fade-up animation
 // defined in globals.css. Users with prefers-reduced-motion see content
 // immediately (CSS handles that override).
-export default function FadeIn({ children, style }) {
+export default function FadeIn({ children, style = undefined }) {
   const ref = useRef(null);
 
   useEffect(() => {
