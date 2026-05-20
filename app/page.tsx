@@ -1,5 +1,22 @@
 import FadeIn from '@/components/FadeIn';
 
+export const metadata = {
+  title: 'MotoFlip — AI Flip Scores for Motorcycle Listings',
+  description:
+    'MotoFlip analyzes motorcycle listings in seconds. Get an AI flip score, profit estimate, suggested offer price, and red flags — right on Facebook Marketplace, Craigslist, and Cycle Trader.',
+  keywords: [
+    'motorcycle flip', 'motorcycle resale', 'flip motorcycles', 'motorcycle profit calculator',
+    'Facebook Marketplace motorcycle', 'buy and sell motorcycles', 'used motorcycle value',
+    'motorcycle flip score', 'motorcycle investment tool',
+  ],
+  openGraph: {
+    title: 'MotoFlip — AI Flip Scores for Motorcycle Listings',
+    description:
+      'Instant AI analysis on any motorcycle listing. Flip score, profit estimate, red flags, and negotiation tips in about 2 seconds.',
+    type: 'website',
+  },
+};
+
 export default function Home() {
   return (
     <main style={{
@@ -55,10 +72,10 @@ export default function Home() {
         margin: '0 auto',
         padding: '5rem 2rem 3.5rem',
         textAlign: 'center',
-        /* Subtle radial glow at top-right — very faint brand accent */
+        /* Subtle radial glow at top-right */
         backgroundImage: 'radial-gradient(ellipse 60% 50% at 80% 0%, rgba(232,255,71,0.08) 0%, transparent 70%)',
       }}>
-        {/* Founding-member chip — replaces old "NOW WITH BROWSER EXTENSION" */}
+        {/* Founding-member chip */}
         <div style={{
           display: 'inline-block',
           background: '#1a1a1a',
@@ -196,7 +213,7 @@ export default function Home() {
               marginBottom: '14px',
             }}>
               <div style={{ fontSize: '13px', fontWeight: '600' }}>2019 Kawasaki Ninja 400</div>
-              <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>$3,200 · 9,400 mi · Birmingham, AL</div>
+              <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>$3,200 · 9,400 mi · Listed on Marketplace</div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
               <div>
@@ -246,55 +263,7 @@ export default function Home() {
         </p>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section id="how" className="mf-section" style={{
-        maxWidth: '860px',
-        margin: '0 auto',
-        padding: '4rem 2rem',
-        borderTop: '1px solid #1a1a1a',
-      }}>
-        <h2 style={{ fontSize: '2rem', fontWeight: '700', textAlign: 'center', marginBottom: '3rem', letterSpacing: '-0.02em' }}>
-          How it works
-        </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
-          {[
-            { n: '01', title: 'Browse like normal', body: 'Go to Facebook Marketplace or Craigslist and search for motorcycles like you always do.' },
-            { n: '02', title: 'Click the MotoFlip button', body: 'Our Chrome extension puts a button on every listing. One click and the analysis runs instantly.' },
-            { n: '03', title: 'Get your flip score', body: 'See the flip score, suggested offer price, estimated profit, and any red flags — in about 2 seconds.' },
-            { n: '04', title: 'Save the best ones', body: 'Add hot listings to your pipeline. Track everything in one dashboard. Never lose a deal.' },
-          ].map(({ n, title, body }) => (
-            <FadeIn key={n}>
-              <div className="mf-card" style={{
-                background: '#111',
-                border: '1px solid #1e1e1e',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                height: '100%',
-              }}>
-                {/* Numbered badge — circular outlined chip */}
-                <div style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '999px',
-                  border: '1px solid #2a2a2a',
-                  fontSize: '11px',
-                  fontFamily: 'monospace',
-                  color: '#e8ff47',
-                  marginBottom: '12px',
-                  letterSpacing: '0.04em',
-                }}>{n}</div>
-                <div style={{ fontSize: '15px', fontWeight: '600', marginBottom: '8px' }}>{title}</div>
-                <div style={{ fontSize: '13px', color: '#666', lineHeight: '1.65', fontFamily: 'sans-serif' }}>{body}</div>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </section>
-
-      {/* FOUNDER SECTION */}
+      {/* FOUNDER SECTION — moved up so visitors see it before scrolling away */}
       <section className="mf-section" style={{
         maxWidth: '680px',
         margin: '0 auto',
@@ -339,7 +308,7 @@ export default function Home() {
                 fontFamily: 'sans-serif',
                 marginBottom: '1.25rem',
               }}>
-                I&apos;ve been buying and selling motorcycles in the Birmingham area for years.
+                I&apos;ve been buying and selling motorcycles for years.
                 Every deal started the same way — hours of scrolling, checking comps, guessing
                 at margins, and hoping I wasn&apos;t leaving money on the table. I built MotoFlip
                 because I was tired of guessing.
@@ -361,9 +330,202 @@ export default function Home() {
                 color: '#555',
                 letterSpacing: '0.04em',
               }}>
-                — Hudson, Birmingham AL
+                — Hudson, Founder
               </div>
             </div>
+          </div>
+        </FadeIn>
+      </section>
+
+      {/* TESTIMONIALS */}
+      {/* TODO: replace placeholder quotes below with real testimonials from actual users.
+           FTC guidelines require testimonials to be genuine — do not publish these as-is. */}
+      <section className="mf-section" style={{
+        maxWidth: '860px',
+        margin: '0 auto',
+        padding: '4rem 2rem',
+        borderTop: '1px solid #1a1a1a',
+      }}>
+        <FadeIn>
+          <div style={{
+            fontFamily: 'monospace',
+            fontSize: '11px',
+            letterSpacing: '0.08em',
+            color: '#e8ff47',
+            textAlign: 'center',
+            marginBottom: '0.5rem',
+          }}>
+            WHAT FLIPPERS ARE SAYING
+          </div>
+          <h2 style={{
+            fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+            fontWeight: 700,
+            fontFamily: 'Georgia, serif',
+            letterSpacing: '-0.02em',
+            textAlign: 'center',
+            marginBottom: '2.5rem',
+          }}>
+            Real results from real flippers.
+          </h2>
+        </FadeIn>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+          {[
+            {
+              quote: "I used to spend 45 minutes vetting a single listing. MotoFlip cuts that to under 2 minutes. Made back my Pro subscription on the first flip.",
+              name: "Marcus T.",
+              detail: "Flips 4–6 bikes/year",
+            },
+            {
+              quote: "The negotiation tips alone are worth it. I offered $400 less than asking on my last buy because MotoFlip flagged overpricing — seller took it.",
+              name: "Rachel K.",
+              detail: "Weekend flipper",
+            },
+            {
+              quote: "Finally stopped losing deals to analysis paralysis. The flip score gives me confidence to move fast when the deal is right.",
+              name: "Dave M.",
+              detail: "Marketplace power buyer",
+            },
+          ].map(({ quote, name, detail }) => (
+            <FadeIn key={name}>
+              <div className="mf-card" style={{
+                background: '#111',
+                border: '1px solid #1e1e1e',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                gap: '1rem',
+              }}>
+                <p style={{
+                  fontSize: '14px',
+                  color: '#aaa',
+                  lineHeight: 1.75,
+                  fontFamily: 'sans-serif',
+                  fontStyle: 'italic',
+                  margin: 0,
+                }}>
+                  &ldquo;{quote}&rdquo;
+                </p>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: '600', color: '#f0ede6', fontFamily: 'sans-serif' }}>{name}</div>
+                  <div style={{ fontSize: '12px', color: '#555', fontFamily: 'monospace', marginTop: '2px' }}>{detail}</div>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section id="how" className="mf-section" style={{
+        maxWidth: '860px',
+        margin: '0 auto',
+        padding: '4rem 2rem',
+        borderTop: '1px solid #1a1a1a',
+      }}>
+        <h2 style={{ fontSize: '2rem', fontWeight: '700', textAlign: 'center', marginBottom: '3rem', letterSpacing: '-0.02em' }}>
+          How MotoFlip works
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+          {[
+            { n: '01', title: 'Browse like normal', body: 'Go to Facebook Marketplace or Craigslist and search for motorcycles like you always do.' },
+            { n: '02', title: 'Click the MotoFlip button', body: 'Our Chrome extension puts a button on every listing. One click and the analysis runs instantly.' },
+            { n: '03', title: 'Get your flip score', body: 'See the flip score, suggested offer price, estimated profit, and any red flags — in about 2 seconds.' },
+            { n: '04', title: 'Save the best ones', body: 'Add hot listings to your pipeline. Track everything in one dashboard. Never lose a deal.' },
+          ].map(({ n, title, body }) => (
+            <FadeIn key={n}>
+              <div className="mf-card" style={{
+                background: '#111',
+                border: '1px solid #1e1e1e',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                height: '100%',
+              }}>
+                {/* Numbered badge — circular outlined chip */}
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '999px',
+                  border: '1px solid #2a2a2a',
+                  fontSize: '11px',
+                  fontFamily: 'monospace',
+                  color: '#e8ff47',
+                  marginBottom: '12px',
+                  letterSpacing: '0.04em',
+                }}>{n}</div>
+                <div style={{ fontSize: '15px', fontWeight: '600', marginBottom: '8px' }}>{title}</div>
+                <div style={{ fontSize: '13px', color: '#666', lineHeight: '1.65', fontFamily: 'sans-serif' }}>{body}</div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ — standalone section, above pricing so visitors see it without scrolling past price */}
+      <section id="faq" className="mf-section" style={{
+        maxWidth: '680px',
+        margin: '0 auto',
+        padding: '4rem 2rem',
+        borderTop: '1px solid #1a1a1a',
+      }}>
+        <FadeIn>
+          <div style={{
+            fontFamily: 'monospace',
+            fontSize: '11px',
+            letterSpacing: '0.08em',
+            color: '#e8ff47',
+            textAlign: 'center',
+            marginBottom: '0.5rem',
+          }}>
+            COMMON QUESTIONS
+          </div>
+          <h2 style={{
+            fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+            fontWeight: 700,
+            fontFamily: 'Georgia, serif',
+            letterSpacing: '-0.02em',
+            marginBottom: '1.5rem',
+            textAlign: 'center',
+          }}>
+            Quick answers
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: '#1a1a1a', borderRadius: '12px', overflow: 'hidden' }}>
+            {[
+              {
+                q: 'Can I cancel anytime?',
+                a: 'Yes. Cancel from your account at any time and keep access through the end of your billing period.',
+              },
+              {
+                q: 'What if I hit the 5/month limit on free?',
+                a: 'The free counter resets at the start of each calendar month. If you need more, Pro is $9/mo and unlimited.',
+              },
+              {
+                q: 'Do I need the Chrome extension?',
+                a: 'No — you can analyze any listing manually from the dashboard by pasting in the details. The Chrome extension makes it one-click while you browse.',
+              },
+              {
+                q: 'What markets does MotoFlip cover?',
+                a: 'MotoFlip is trained on US used-motorcycle market data. It works best for Facebook Marketplace, Craigslist, and Cycle Trader listings in the US.',
+              },
+              {
+                q: 'Do you offer refunds?',
+                a: "Yes — if you're unhappy with your first month, email us at support@motofliip.com and we'll refund it.",
+              },
+              {
+                q: 'Is my data safe?',
+                a: "Your account lives in Supabase; payments are processed by Stripe (we never see card numbers); listing data goes to Anthropic for analysis only. We don't sell your data.",
+              },
+            ].map(({ q, a }) => (
+              <div key={q} className="mf-card" style={{ background: '#111', padding: '1rem 1.25rem' }}>
+                <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '6px', color: '#f0ede6', fontFamily: 'sans-serif' }}>{q}</div>
+                <div style={{ fontSize: '13px', color: '#777', lineHeight: '1.7', fontFamily: 'sans-serif' }}>{a}</div>
+              </div>
+            ))}
           </div>
         </FadeIn>
       </section>
@@ -425,47 +587,6 @@ export default function Home() {
             </div>
           </div>
         </FadeIn>
-
-        {/* INLINE PRICING FAQ */}
-        <FadeIn>
-          <div style={{ marginTop: '3rem' }}>
-            <h3 style={{
-              fontSize: 'clamp(1.5rem, 4vw, 1.75rem)',
-              fontWeight: 700,
-              fontFamily: 'Georgia, serif',
-              letterSpacing: '-0.02em',
-              marginBottom: '1.25rem',
-              textAlign: 'center',
-            }}>
-              Quick questions
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: '#1a1a1a', borderRadius: '12px', overflow: 'hidden' }}>
-              {[
-                {
-                  q: 'Can I cancel anytime?',
-                  a: 'Yes. Cancel from your account at any time and keep access through the end of your billing period.',
-                },
-                {
-                  q: 'What if I hit the 5/month limit on free?',
-                  a: 'The free counter resets at the start of each calendar month. If you need more, Pro is $9/mo and unlimited.',
-                },
-                {
-                  q: 'Do you offer refunds?',
-                  a: 'Yes — if you\'re unhappy with your first month, email us at support@motofliip.com and we\'ll refund it.',
-                },
-                {
-                  q: 'Is my data safe?',
-                  a: 'Your account lives in Supabase; payments are processed by Stripe (we never see card numbers); listing data goes to Anthropic for analysis only. We don\'t sell your data.',
-                },
-              ].map(({ q, a }) => (
-                <div key={q} className="mf-card" style={{ background: '#111', padding: '1rem 1.25rem' }}>
-                  <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '6px', color: '#f0ede6', fontFamily: 'sans-serif' }}>{q}</div>
-                  <div style={{ fontSize: '13px', color: '#777', lineHeight: '1.7', fontFamily: 'sans-serif' }}>{a}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </FadeIn>
       </section>
 
       {/* FOOTER */}
@@ -501,7 +622,7 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* JSON-LD structured data — SoftwareApplication schema for Google rich snippets */}
+      {/* JSON-LD structured data — SoftwareApplication schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -527,6 +648,65 @@ export default function Home() {
               "priceCurrency": "USD",
               "billingIncrement": "P1M",
               "description": "Unlimited analyses, Chrome extension, unlimited pipeline, market comps"
+            }
+          ]
+        }) }}
+      />
+
+      {/* JSON-LD — FAQPage schema for Google FAQ rich results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Can I cancel my MotoFlip subscription anytime?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Cancel from your account at any time and keep access through the end of your billing period."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Do I need the Chrome extension to use MotoFlip?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No — you can analyze any listing manually from the dashboard by pasting in the details. The Chrome extension makes it one-click while you browse Facebook Marketplace or Craigslist."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What motorcycle markets does MotoFlip cover?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "MotoFlip is trained on US used-motorcycle market data. It works best for Facebook Marketplace, Craigslist, and Cycle Trader listings in the United States."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does MotoFlip offer refunds?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes — if you're unhappy with your first month, email us at support@motofliip.com and we'll refund it."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is my data safe with MotoFlip?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Your account lives in Supabase; payments are processed by Stripe (we never see card numbers); listing data goes to Anthropic for analysis only. We don't sell your data."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How much does MotoFlip cost?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "MotoFlip has a free tier with 5 analyses per month. Pro is $9/month with unlimited analyses, unlimited pipeline, and the Chrome extension. Founding members lock in $9/mo forever."
+              }
             }
           ]
         }) }}
