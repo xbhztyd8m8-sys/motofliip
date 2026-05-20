@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 
@@ -73,6 +73,8 @@ export default function Dashboard() {
   const [upgrading, setUpgrading] = useState(false);
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
   const [showUpgradeCelebration, setShowUpgradeCelebration] = useState(false);
+  const [dotCount, setDotCount] = useState(0);
+  const yearInputRef = useRef(null);
 
   // Post-checkout celebration — runs once on mount if ?upgraded=true is set.
   // Clean the URL so a refresh doesn't re-trigger; auto-dismiss after 7s.
@@ -124,6 +126,39 @@ export default function Dashboard() {
     return () => { cancelled = true; };
   }, [router]);
 
+  // Set page title
+  useEffect(() => {
+    document.title = 'Dashboard · MotoFlip';
+  }, []);
+
+  // Animated dots while analyzing (cycles 0→1→2→3 every 400ms)
+  useEffect(() => {
+    if (!loading) { setDotCount(0); return; }
+    const id = setInterval(() => setDotCount(n => (n + 1) % 4), 400);
+    return () => clearInterval(id);
+  }, [loading]);
+
+  // Auto-focus the Year input once auth check completes, only on analyze tab
+  useEffect(() => {
+    if (!authLoading && tab === 'analyze' && yearInputRef.current) {
+      yearInputRef.current.focus();
+    }
+  }, [authLoading, tab]);
+
+  // Esc key clears the form and result while on analyze tab
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === 'Escape' && tab === 'analyze') {
+        setForm({ year: '', make: '', model: '', price: '', mileage: '', condition: '', description: '' });
+        setResult(null);
+        setError('');
+      }
+    }
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [tab]);
+
+  // Functional-style field setter — avoids spreading the whole form object at each call site
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   function tryExampleListing() {
@@ -185,6 +220,8 @@ export default function Dashboard() {
     setLoading(false);
   }
 
+  // addedIds tracks which result IDs have been saved so the button turns into a
+  // confirmation state ("✓ Added") instead of allowing double-adds.
   function addToPipeline() {
     if (!result || addedIds.has(result.id)) return;
     setPipeline(p => [result, ...p]);
@@ -197,8 +234,11 @@ export default function Dashboard() {
 
   if (authLoading) return <AuthLoading />;
 
+  // Derived display values — computed each render from the latest user object
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || 'rider';
+  // isPro is set server-side by the Stripe webhook via Supabase app_metadata.is_pro
   const isPro = !!user?.app_metadata?.is_pro;
+  // Show the onboarding card only on first visit (no dismissal, no result, empty pipeline, analyze tab)
   const showOnboarding = !onboardingDismissed && !result && pipeline.length === 0 && tab === 'analyze';
 
   const avgProfit = pipeline.length ? Math.round(pipeline.reduce((s, p) => s + p.estimated_profit, 0) / pipeline.length) : 0;
@@ -230,8 +270,8 @@ export default function Dashboard() {
         position: 'sticky', top: 0, background: '#0a0a0a', zIndex: 100,
       }}>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <div style={{ fontSize: '15px', fontWeight: '700', fontFamily: 'Georgia, serif' }}>🏍️ MotoFlip</div>
-          <div style={{ fontSize: '13px', color: '#666', fontFamily: 'sans-serif' }}>
+          <div style={{ fontSize: '15px', fontWeight: '700', fontFamily: 'Georgia, serif' }}><span aria-hidden="true">🏍️</span> MotoFlip</div>
+          <div className="mf-greeting" style={{ fontSize: '13px', color: '#666', fontFamily: 'sans-serif' }}>
             Hey {firstName} 👋
           </div>
         </div>
@@ -252,6 +292,7 @@ export default function Dashboard() {
                 Free plan · 5 analyses/mo
               </div>
               <button
+                type="button"
                 onClick={handleUpgrade}
                 disabled={upgrading}
                 className="mf-btn-primary"
@@ -262,6 +303,7 @@ export default function Dashboard() {
             </>
           )}
           <button
+            type="button"
             onClick={handleSignOut}
             className="mf-btn-ghost"
             style={{ background: 'transparent', color: '#888', border: '1px solid #222', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', fontFamily: 'monospace' }}
@@ -291,6 +333,7 @@ export default function Dashboard() {
             }}
           >
             <button
+              type="button"
               onClick={() => setShowUpgradeCelebration(false)}
               aria-label="Dismiss"
               style={{
@@ -325,8 +368,8 @@ export default function Dashboard() {
 
         {/* TABS */}
         <div style={{ display: 'flex', borderBottom: '1px solid #1a1a1a', marginBottom: '2rem' }}>
-          <button style={tabStyle(tab === 'analyze')} onClick={() => setTab('analyze')}>Analyze listing</button>
-          <button style={tabStyle(tab === 'pipeline')} onClick={() => setTab('pipeline')}>
+          <button type="button" style={tabStyle(tab === 'analyze')} onClick={() => setTab('analyze')}>Analyze listing</button>
+          <button type="button" style={tabStyle(tab === 'pipeline')} onClick={() => setTab('pipeline')}>
             Pipeline {pipeline.length > 0 && <span style={{ marginLeft: '4px', background: '#e8ff47', color: '#0a0a0a', borderRadius: '999px', fontSize: '11px', fontWeight: '800', padding: '1px 7px' }}>{pipeline.length}</span>}
           </button>
         </div>
@@ -345,6 +388,7 @@ export default function Dashboard() {
                 position: 'relative',
               }}>
                 <button
+                  type="button"
                   onClick={() => setOnboardingDismissed(true)}
                   aria-label="Dismiss"
                   style={{
@@ -365,6 +409,7 @@ export default function Dashboard() {
                   about two seconds. Or try it instantly with an example listing.
                 </p>
                 <button
+                  type="button"
                   onClick={tryExampleListing}
                   className="mf-btn-primary"
                   style={{
@@ -382,7 +427,7 @@ export default function Dashboard() {
             <div className="mf-grid-2" style={{ marginBottom: '12px' }}>
               <div>
                 <label style={labelStyle}>YEAR</label>
-                <input style={inputStyle} type="number" placeholder="e.g. 2019" value={form.year} onChange={e => set('year', e.target.value)} />
+                <input ref={yearInputRef} style={inputStyle} type="number" placeholder="e.g. 2019" value={form.year} onChange={e => set('year', e.target.value)} />
               </div>
               <div>
                 <label style={labelStyle}>MAKE</label>
@@ -430,6 +475,7 @@ export default function Dashboard() {
 
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
               <button
+                type="button"
                 onClick={analyze}
                 disabled={loading}
                 className="mf-btn-primary"
@@ -441,9 +487,10 @@ export default function Dashboard() {
                   fontFamily: 'monospace',
                 }}
               >
-                {loading ? 'Analyzing…' : 'Analyze flip potential →'}
+                {loading ? `Analyzing${'.'.repeat(dotCount)}` : 'Analyze flip potential →'}
               </button>
               <button
+                type="button"
                 onClick={() => { setForm({ year: '', make: '', model: '', price: '', mileage: '', condition: '', description: '' }); setResult(null); setError(''); }}
                 className="mf-btn-ghost"
                 style={{ background: 'transparent', color: '#888', border: '1px solid #222', padding: '12px 20px', borderRadius: '8px', fontSize: '14px', cursor: 'pointer' }}
@@ -451,6 +498,46 @@ export default function Dashboard() {
                 Clear
               </button>
             </div>
+
+            {/* SKELETON — shown while analysis is loading, same shape as result card */}
+            {loading && (
+              <div style={{ marginTop: '2rem', background: '#111', border: '1px solid #1e1e1e', borderRadius: '14px', padding: '1.5rem' }}>
+                {/* Header row */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', gap: '12px' }}>
+                  <div style={{ flex: 1 }}>
+                    <div className="mf-skeleton-bar" style={{ height: '18px', width: '55%', marginBottom: '8px' }} />
+                    <div className="mf-skeleton-bar" style={{ height: '12px', width: '35%' }} />
+                  </div>
+                  <div className="mf-skeleton-bar" style={{ height: '26px', width: '90px', borderRadius: '999px' }} />
+                </div>
+                {/* Stats row */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '1rem' }}>
+                  {[0,1,2,3].map(i => (
+                    <div key={i} style={{ background: '#161616', borderRadius: '8px', padding: '12px 14px' }}>
+                      <div className="mf-skeleton-bar" style={{ height: '10px', width: '60%', marginBottom: '8px' }} />
+                      <div className="mf-skeleton-bar" style={{ height: '20px', width: '80%' }} />
+                    </div>
+                  ))}
+                </div>
+                {/* Summary bar */}
+                <div className="mf-skeleton-bar" style={{ height: '72px', borderRadius: '8px', marginBottom: '1rem' }} />
+                {/* Flags row */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1rem' }}>
+                  <div>
+                    <div className="mf-skeleton-bar" style={{ height: '10px', width: '50%', marginBottom: '10px' }} />
+                    {[0,1,2].map(i => <div key={i} className="mf-skeleton-bar" style={{ height: '13px', width: '90%', marginBottom: '6px' }} />)}
+                  </div>
+                  <div>
+                    <div className="mf-skeleton-bar" style={{ height: '10px', width: '50%', marginBottom: '10px' }} />
+                    {[0,1].map(i => <div key={i} className="mf-skeleton-bar" style={{ height: '13px', width: '80%', marginBottom: '6px' }} />)}
+                  </div>
+                </div>
+                {/* Negotiation tip bar */}
+                <div className="mf-skeleton-bar" style={{ height: '52px', borderRadius: '8px', marginBottom: '1rem' }} />
+                {/* Button placeholder */}
+                <div className="mf-skeleton-bar" style={{ height: '38px', width: '160px', borderRadius: '8px' }} />
+              </div>
+            )}
 
             {/* RESULT */}
             {result && (
@@ -495,6 +582,7 @@ export default function Dashboard() {
                 </div>
 
                 <button
+                  type="button"
                   onClick={addToPipeline}
                   disabled={addedIds.has(result.id)}
                   className={addedIds.has(result.id) ? '' : 'mf-btn-primary'}
@@ -523,10 +611,31 @@ export default function Dashboard() {
             </div>
 
             {pipeline.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '4rem 1rem', color: '#444', fontSize: '14px' }}>
-                <div style={{ fontSize: '40px', marginBottom: '12px' }}>🏍️</div>
-                <div style={{ marginBottom: '4px', color: '#888' }}>No listings tracked yet.</div>
-                <div style={{ fontSize: '13px', color: '#555' }}>Analyze a listing and tap &ldquo;Save to pipeline&rdquo; to start tracking it here.</div>
+              <div style={{ textAlign: 'center', padding: '4rem 1rem' }}>
+                <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }} aria-hidden="true">🏍️</div>
+                <h3 style={{
+                  fontSize: '20px', fontWeight: 700, fontFamily: 'Georgia, serif',
+                  color: '#f0ede6', marginBottom: '10px',
+                }}>
+                  Your pipeline lives here
+                </h3>
+                <p style={{ fontSize: '14px', color: '#666', lineHeight: 1.65, maxWidth: '380px', margin: '0 auto 1.5rem' }}>
+                  Analyze a listing and tap &ldquo;Save to pipeline&rdquo; to start tracking it.
+                  Keep your hottest finds in one place and never lose a deal.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setTab('analyze')}
+                  className="mf-btn-primary"
+                  style={{
+                    background: '#e8ff47', color: '#0a0a0a',
+                    border: 'none', padding: '10px 20px', borderRadius: '8px',
+                    fontSize: '13px', fontWeight: 700, fontFamily: 'monospace',
+                    letterSpacing: '0.02em', cursor: 'pointer',
+                  }}
+                >
+                  Analyze a listing →
+                </button>
               </div>
             ) : (
               pipeline.map(r => (
@@ -538,7 +647,7 @@ export default function Dashboard() {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <ScoreBadge score={r.score} />
-                      <button onClick={() => removeFromPipeline(r.id)} aria-label="Remove" style={{ background: 'none', border: 'none', color: '#333', fontSize: '18px', cursor: 'pointer', lineHeight: 1 }}>×</button>
+                      <button type="button" onClick={() => removeFromPipeline(r.id)} aria-label="Remove" style={{ background: 'none', border: 'none', color: '#333', fontSize: '18px', cursor: 'pointer', lineHeight: 1 }}>×</button>
                     </div>
                   </div>
                   <div className="mf-grid-4 mf-stats-4" style={{ gap: '8px' }}>

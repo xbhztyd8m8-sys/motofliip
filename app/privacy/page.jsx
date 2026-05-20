@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'Privacy',
+  description: 'MotoFlip privacy policy — how we collect, use, and protect your data.',
+};
+
 export default function Privacy() {
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#f0ede6', fontFamily: 'sans-serif' }}>

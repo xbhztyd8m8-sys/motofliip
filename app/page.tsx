@@ -1,3 +1,5 @@
+import FadeIn from '@/components/FadeIn';
+
 export default function Home() {
   return (
     <main style={{
@@ -20,7 +22,7 @@ export default function Home() {
         zIndex: 100,
       }}>
         <div style={{ fontSize: '1.25rem', fontWeight: '700', letterSpacing: '-0.02em' }}>
-          🏍️ MotoFlip
+          <span aria-hidden="true">🏍️</span> MotoFlip
         </div>
         <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
           <div className="mf-nav-links" style={{ display: 'flex', gap: '1.75rem', alignItems: 'center' }}>
@@ -53,7 +55,10 @@ export default function Home() {
         margin: '0 auto',
         padding: '5rem 2rem 3.5rem',
         textAlign: 'center',
+        /* Subtle radial glow at top-right — very faint brand accent */
+        backgroundImage: 'radial-gradient(ellipse 60% 50% at 80% 0%, rgba(232,255,71,0.08) 0%, transparent 70%)',
       }}>
+        {/* Founding-member chip — replaces old "NOW WITH BROWSER EXTENSION" */}
         <div style={{
           display: 'inline-block',
           background: '#1a1a1a',
@@ -66,7 +71,7 @@ export default function Home() {
           marginBottom: '2rem',
           letterSpacing: '0.06em',
         }}>
-          NOW WITH BROWSER EXTENSION
+          <span aria-hidden="true">🏍️</span>{"  "}FOUNDING MEMBERS · $9/MO LOCKED IN FOREVER
         </div>
 
         <h1 style={{
@@ -119,7 +124,45 @@ export default function Home() {
             See how it works
           </a>
         </div>
+
+        {/* Founding-member / no-card line */}
+        <p style={{
+          fontSize: '12px',
+          color: '#555',
+          fontFamily: 'monospace',
+          letterSpacing: '0.04em',
+          marginTop: '1rem',
+          marginBottom: 0,
+        }}>
+          First 100 founding members · No card required to start
+        </p>
       </section>
+
+      {/* TRUST SIGNALS */}
+      <FadeIn>
+        <section className="mf-section" style={{
+          maxWidth: '620px',
+          margin: '0 auto 2rem',
+          padding: '0 2rem',
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '8px',
+            flexWrap: 'wrap',
+            fontFamily: 'monospace',
+            fontSize: '13px',
+            color: '#666',
+          }}>
+            <span>⚡ Analysis in ~2 seconds</span>
+            <span style={{ color: '#2a2a2a' }}>·</span>
+            <span>🇺🇸 Trained on US used-bike market data</span>
+            <span style={{ color: '#2a2a2a' }}>·</span>
+            <span>🔒 No credit card required to start</span>
+          </div>
+        </section>
+      </FadeIn>
 
       {/* EXTENSION PREVIEW MOCK */}
       <section className="mf-section" style={{
@@ -142,7 +185,7 @@ export default function Home() {
             alignItems: 'center',
             borderBottom: '1px solid #222',
           }}>
-            <span style={{ fontWeight: '700', fontSize: '14px' }}>🏍️ MotoFlip</span>
+            <span style={{ fontWeight: '700', fontSize: '14px' }}><span aria-hidden="true">🏍️</span> MotoFlip</span>
             <span style={{ color: '#444', fontSize: '18px', cursor: 'pointer' }}>×</span>
           </div>
           <div style={{ padding: '16px' }}>
@@ -185,12 +228,12 @@ export default function Home() {
               <div style={{ fontSize: '12px', color: '#f87171' }}>✗ Mileage slightly high for year</div>
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button style={{
+              <button type="button" style={{
                 flex: 1, padding: '9px', borderRadius: '7px',
                 background: '#e8ff47', color: '#0a0a0a',
                 border: 'none', fontWeight: '700', fontSize: '12px', cursor: 'pointer', fontFamily: 'monospace',
               }}>Save to pipeline</button>
-              <button style={{
+              <button type="button" style={{
                 flex: 1, padding: '9px', borderRadius: '7px',
                 background: 'transparent', color: '#f0ede6',
                 border: '1px solid #2a2a2a', fontSize: '12px', cursor: 'pointer',
@@ -220,18 +263,109 @@ export default function Home() {
             { n: '03', title: 'Get your flip score', body: 'See the flip score, suggested offer price, estimated profit, and any red flags — in about 2 seconds.' },
             { n: '04', title: 'Save the best ones', body: 'Add hot listings to your pipeline. Track everything in one dashboard. Never lose a deal.' },
           ].map(({ n, title, body }) => (
-            <div key={n} className="mf-card" style={{
-              background: '#111',
-              border: '1px solid #1e1e1e',
-              borderRadius: '12px',
-              padding: '1.5rem',
-            }}>
-              <div style={{ fontSize: '11px', fontFamily: 'monospace', color: '#e8ff47', marginBottom: '10px', letterSpacing: '0.06em' }}>{n}</div>
-              <div style={{ fontSize: '15px', fontWeight: '600', marginBottom: '8px' }}>{title}</div>
-              <div style={{ fontSize: '13px', color: '#666', lineHeight: '1.65', fontFamily: 'sans-serif' }}>{body}</div>
-            </div>
+            <FadeIn key={n}>
+              <div className="mf-card" style={{
+                background: '#111',
+                border: '1px solid #1e1e1e',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                height: '100%',
+              }}>
+                {/* Numbered badge — circular outlined chip */}
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '999px',
+                  border: '1px solid #2a2a2a',
+                  fontSize: '11px',
+                  fontFamily: 'monospace',
+                  color: '#e8ff47',
+                  marginBottom: '12px',
+                  letterSpacing: '0.04em',
+                }}>{n}</div>
+                <div style={{ fontSize: '15px', fontWeight: '600', marginBottom: '8px' }}>{title}</div>
+                <div style={{ fontSize: '13px', color: '#666', lineHeight: '1.65', fontFamily: 'sans-serif' }}>{body}</div>
+              </div>
+            </FadeIn>
           ))}
         </div>
+      </section>
+
+      {/* FOUNDER SECTION */}
+      <section className="mf-section" style={{
+        maxWidth: '680px',
+        margin: '0 auto',
+        padding: '4rem 2rem',
+        borderTop: '1px solid #1a1a1a',
+      }}>
+        <FadeIn>
+          <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
+            {/* Thin brand-yellow accent line on the left */}
+            <div style={{
+              width: '4px',
+              background: '#e8ff47',
+              borderRadius: '2px',
+              flexShrink: 0,
+              alignSelf: 'stretch',
+              minHeight: '100%',
+            }} />
+            <div>
+              <div style={{
+                fontFamily: 'monospace',
+                fontSize: '11px',
+                letterSpacing: '0.08em',
+                color: '#e8ff47',
+                marginBottom: '0.75rem',
+              }}>
+                MEET THE BUILDER
+              </div>
+              <h2 style={{
+                fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+                fontWeight: 700,
+                fontFamily: 'Georgia, serif',
+                letterSpacing: '-0.02em',
+                marginBottom: '1rem',
+              }}>
+                Built by a flipper, for flippers.
+              </h2>
+              {/* TODO: replace with real founder story */}
+              <p style={{
+                fontSize: '15px',
+                color: '#888',
+                lineHeight: 1.75,
+                fontFamily: 'sans-serif',
+                marginBottom: '1.25rem',
+              }}>
+                I&apos;ve been buying and selling motorcycles in the Birmingham area for years.
+                Every deal started the same way — hours of scrolling, checking comps, guessing
+                at margins, and hoping I wasn&apos;t leaving money on the table. I built MotoFlip
+                because I was tired of guessing.
+              </p>
+              <p style={{
+                fontSize: '15px',
+                color: '#888',
+                lineHeight: 1.75,
+                fontFamily: 'sans-serif',
+                marginBottom: '1.5rem',
+              }}>
+                This is the tool I wish I had when I started flipping. Every feature comes
+                from a real frustration I had as a buyer — the flip score, the negotiation
+                tips, the pipeline tracker. It&apos;s all here because I needed it.
+              </p>
+              <div style={{
+                fontFamily: 'monospace',
+                fontSize: '13px',
+                color: '#555',
+                letterSpacing: '0.04em',
+              }}>
+                — Hudson, Birmingham AL
+              </div>
+            </div>
+          </div>
+        </FadeIn>
       </section>
 
       {/* PRICING */}
@@ -240,54 +374,98 @@ export default function Home() {
         margin: '0 auto',
         padding: '4rem 2rem',
         borderTop: '1px solid #1a1a1a',
+        backgroundImage: 'linear-gradient(180deg, transparent 0%, rgba(232,255,71,0.02) 100%)',
       }}>
         <h2 style={{ fontSize: 'clamp(1.75rem, 5vw, 2rem)', fontWeight: '700', textAlign: 'center', marginBottom: '3rem', letterSpacing: '-0.02em' }}>
           Simple pricing
         </h2>
-        <div className="mf-grid-2" style={{ gap: '1rem' }}>
-          <div className="mf-card" style={{
-            background: '#111',
-            border: '1px solid #1e1e1e',
-            borderRadius: '12px',
-            padding: '2rem',
-          }}>
-            <div style={{ fontSize: '13px', color: '#666', fontFamily: 'monospace', marginBottom: '6px' }}>FREE</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '4px' }}>$0</div>
-            <div style={{ fontSize: '13px', color: '#555', marginBottom: '1.5rem' }}>forever</div>
-            {['5 analyses per month', 'Pipeline up to 10 listings', 'Basic flip scores', 'Web app only'].map(f => (
-              <div key={f} style={{ fontSize: '13px', color: '#888', marginBottom: '8px', fontFamily: 'sans-serif' }}>✓ {f}</div>
-            ))}
-            <a href="/signup" className="mf-btn-ghost" style={{
-              display: 'block', textAlign: 'center', marginTop: '1.5rem',
-              border: '1px solid #2a2a2a', color: '#f0ede6', padding: '10px',
-              borderRadius: '7px', textDecoration: 'none', fontSize: '14px',
-            }}>Get started free</a>
+        <FadeIn>
+          <div className="mf-grid-2" style={{ gap: '1rem' }}>
+            <div className="mf-card" style={{
+              background: '#111',
+              border: '1px solid #1e1e1e',
+              borderRadius: '12px',
+              padding: '2rem',
+            }}>
+              <div style={{ fontSize: '13px', color: '#666', fontFamily: 'monospace', marginBottom: '6px' }}>FREE</div>
+              <div style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '4px' }}>$0</div>
+              <div style={{ fontSize: '13px', color: '#555', marginBottom: '1.5rem' }}>forever</div>
+              {['5 analyses per month', 'Pipeline up to 10 listings', 'Basic flip scores', 'Web app only'].map(f => (
+                <div key={f} style={{ fontSize: '13px', color: '#888', marginBottom: '8px', fontFamily: 'sans-serif' }}>✓ {f}</div>
+              ))}
+              <a href="/signup" className="mf-btn-ghost" style={{
+                display: 'block', textAlign: 'center', marginTop: '1.5rem',
+                border: '1px solid #2a2a2a', color: '#f0ede6', padding: '10px',
+                borderRadius: '7px', textDecoration: 'none', fontSize: '14px',
+              }}>Get started free</a>
+            </div>
+            <div className="mf-card" style={{
+              background: '#111',
+              border: '2px solid #e8ff47',
+              borderRadius: '12px',
+              padding: '2rem',
+              position: 'relative',
+            }}>
+              <div style={{
+                position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)',
+                background: '#e8ff47', color: '#0a0a0a', fontSize: '11px', fontWeight: '800',
+                padding: '3px 12px', borderRadius: '999px', fontFamily: 'monospace', letterSpacing: '0.06em',
+              }}>FOUNDING MEMBER</div>
+              <div style={{ fontSize: '13px', color: '#e8ff47', fontFamily: 'monospace', marginBottom: '6px' }}>PRO</div>
+              <div style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '4px' }}>$9</div>
+              <div style={{ fontSize: '13px', color: '#555', marginBottom: '1.5rem' }}>per month · locked in for life</div>
+              {['Unlimited analyses', 'Unlimited pipeline', 'Chrome extension', 'Market comps view', 'Profit tracking + sold log'].map(f => (
+                <div key={f} style={{ fontSize: '13px', color: '#ccc', marginBottom: '8px', fontFamily: 'sans-serif' }}>✓ {f}</div>
+              ))}
+              <a href="/signup?plan=pro" className="mf-btn-primary" style={{
+                display: 'block', textAlign: 'center', marginTop: '1.5rem',
+                background: '#e8ff47', color: '#0a0a0a', padding: '10px',
+                borderRadius: '7px', textDecoration: 'none', fontSize: '14px', fontWeight: '700', fontFamily: 'monospace',
+              }}>Become a founding member</a>
+            </div>
           </div>
-          <div className="mf-card" style={{
-            background: '#111',
-            border: '2px solid #e8ff47',
-            borderRadius: '12px',
-            padding: '2rem',
-            position: 'relative',
-          }}>
-            <div style={{
-              position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)',
-              background: '#e8ff47', color: '#0a0a0a', fontSize: '11px', fontWeight: '800',
-              padding: '3px 12px', borderRadius: '999px', fontFamily: 'monospace', letterSpacing: '0.06em',
-            }}>MOST POPULAR</div>
-            <div style={{ fontSize: '13px', color: '#e8ff47', fontFamily: 'monospace', marginBottom: '6px' }}>PRO</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '4px' }}>$9</div>
-            <div style={{ fontSize: '13px', color: '#555', marginBottom: '1.5rem' }}>per month</div>
-            {['Unlimited analyses', 'Unlimited pipeline', 'Chrome extension', 'Market comps view', 'Profit tracking + sold log'].map(f => (
-              <div key={f} style={{ fontSize: '13px', color: '#ccc', marginBottom: '8px', fontFamily: 'sans-serif' }}>✓ {f}</div>
-            ))}
-            <a href="/signup?plan=pro" className="mf-btn-primary" style={{
-              display: 'block', textAlign: 'center', marginTop: '1.5rem',
-              background: '#e8ff47', color: '#0a0a0a', padding: '10px',
-              borderRadius: '7px', textDecoration: 'none', fontSize: '14px', fontWeight: '700', fontFamily: 'monospace',
-            }}>Start Pro free trial</a>
+        </FadeIn>
+
+        {/* INLINE PRICING FAQ */}
+        <FadeIn>
+          <div style={{ marginTop: '3rem' }}>
+            <h3 style={{
+              fontSize: 'clamp(1.5rem, 4vw, 1.75rem)',
+              fontWeight: 700,
+              fontFamily: 'Georgia, serif',
+              letterSpacing: '-0.02em',
+              marginBottom: '1.25rem',
+              textAlign: 'center',
+            }}>
+              Quick questions
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: '#1a1a1a', borderRadius: '12px', overflow: 'hidden' }}>
+              {[
+                {
+                  q: 'Can I cancel anytime?',
+                  a: 'Yes. Cancel from your account at any time and keep access through the end of your billing period.',
+                },
+                {
+                  q: 'What if I hit the 5/month limit on free?',
+                  a: 'The free counter resets at the start of each calendar month. If you need more, Pro is $9/mo and unlimited.',
+                },
+                {
+                  q: 'Do you offer refunds?',
+                  a: 'Yes — if you\'re unhappy with your first month, email us at support@motofliip.com and we\'ll refund it.',
+                },
+                {
+                  q: 'Is my data safe?',
+                  a: 'Your account lives in Supabase; payments are processed by Stripe (we never see card numbers); listing data goes to Anthropic for analysis only. We don\'t sell your data.',
+                },
+              ].map(({ q, a }) => (
+                <div key={q} className="mf-card" style={{ background: '#111', padding: '1rem 1.25rem' }}>
+                  <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '6px', color: '#f0ede6', fontFamily: 'sans-serif' }}>{q}</div>
+                  <div style={{ fontSize: '13px', color: '#777', lineHeight: '1.7', fontFamily: 'sans-serif' }}>{a}</div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </FadeIn>
       </section>
 
       {/* FOOTER */}
@@ -299,10 +477,22 @@ export default function Home() {
         fontSize: '13px',
         fontFamily: 'monospace',
       }}>
+        {/* Brand tagline */}
+        <p style={{
+          color: '#444',
+          fontSize: '13px',
+          fontFamily: 'sans-serif',
+          maxWidth: '480px',
+          margin: '0 auto 1.25rem',
+          lineHeight: 1.55,
+        }}>
+          MotoFlip — AI flip scores for any motorcycle listing.
+        </p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
           <a href="/faq" className="mf-link" style={{ color: '#555', textDecoration: 'none' }}>FAQ</a>
           <a href="/privacy" className="mf-link" style={{ color: '#555', textDecoration: 'none' }}>Privacy Policy</a>
           <a href="/terms" className="mf-link" style={{ color: '#555', textDecoration: 'none' }}>Terms of Service</a>
+          <a href="/blog" className="mf-link" style={{ color: '#555', textDecoration: 'none' }}>Blog</a>
           <a href="mailto:support@motofliip.com" className="mf-link" style={{ color: '#555', textDecoration: 'none' }}>Support</a>
         </div>
         <div>© 2026 MotoFlip · Built for flippers, by flippers</div>
@@ -311,9 +501,37 @@ export default function Home() {
         </div>
       </footer>
 
+      {/* JSON-LD structured data — SoftwareApplication schema for Google rich snippets */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "MotoFlip",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "description": "MotoFlip analyzes motorcycle listings in seconds. Get an AI flip score, profit estimate, suggested offer price, and red flags — right on Facebook Marketplace and Craigslist.",
+          "url": "https://motofliip.vercel.app",
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Free",
+              "price": "0",
+              "priceCurrency": "USD",
+              "description": "5 analyses per month, pipeline up to 10 listings"
+            },
+            {
+              "@type": "Offer",
+              "name": "Pro",
+              "price": "9",
+              "priceCurrency": "USD",
+              "billingIncrement": "P1M",
+              "description": "Unlimited analyses, Chrome extension, unlimited pipeline, market comps"
+            }
+          ]
+        }) }}
+      />
+
     </main>
   );
 }
-
-
-

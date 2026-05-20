@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase';
 
 export default function Signup() {
@@ -11,6 +11,10 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    document.title = 'Create your account · MotoFlip';
+  }, []);
 
   async function handleSignup() {
     if (!email || !password || !name) {
@@ -97,8 +101,9 @@ export default function Signup() {
         <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: '14px', padding: '2rem' }}>
           <h1 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '1.5rem', fontFamily: 'Georgia, serif' }}>Create your account</h1>
 
-          <label style={labelStyle}>FULL NAME</label>
+          <label htmlFor="signup-name" style={labelStyle}>FULL NAME</label>
           <input
+            id="signup-name"
             style={inputStyle}
             type="text"
             placeholder="Hudson Rukstalis"
@@ -106,8 +111,9 @@ export default function Signup() {
             onChange={e => setName(e.target.value)}
           />
 
-          <label style={labelStyle}>EMAIL</label>
+          <label htmlFor="signup-email" style={labelStyle}>EMAIL</label>
           <input
+            id="signup-email"
             style={inputStyle}
             type="email"
             placeholder="you@example.com"
@@ -115,8 +121,9 @@ export default function Signup() {
             onChange={e => setEmail(e.target.value)}
           />
 
-          <label style={labelStyle}>PASSWORD</label>
+          <label htmlFor="signup-password" style={labelStyle}>PASSWORD</label>
           <input
+            id="signup-password"
             style={inputStyle}
             type="password"
             placeholder="At least 6 characters"
@@ -125,8 +132,9 @@ export default function Signup() {
             onKeyDown={e => e.key === 'Enter' && handleSignup()}
           />
 
-          <label style={labelStyle}>LOCATION <span style={{ color: '#333' }}>— optional</span></label>
+          <label htmlFor="signup-location" style={labelStyle}>LOCATION <span style={{ color: '#333' }}>— optional</span></label>
           <input
+            id="signup-location"
             style={inputStyle}
             type="text"
             placeholder="e.g. Birmingham, AL"
@@ -138,6 +146,7 @@ export default function Signup() {
           {error && <div style={{ color: '#f87171', fontSize: '13px', marginBottom: '12px' }}>{error}</div>}
 
           <button
+            type="button"
             onClick={handleSignup}
             disabled={loading}
             style={{

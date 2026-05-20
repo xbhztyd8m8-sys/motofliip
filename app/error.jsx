@@ -1,11 +1,14 @@
+'use client';
+
+import { useEffect } from 'react';
 import Link from 'next/link';
 
-export const metadata = {
-  title: 'Page not found — MotoFlip',
-  description: 'That page took a wrong turn.',
-};
+// Next.js 16 error boundary — receives unstable_retry (not reset) to re-fetch + re-render
+export default function Error({ error, unstable_retry }) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
 
-export default function NotFound() {
   return (
     <div style={{
       minHeight: '100vh',
@@ -25,10 +28,10 @@ export default function NotFound() {
           color: '#e8ff47',
           marginBottom: '1rem',
         }}>
-          ERROR · 404
+          ERROR · UNEXPECTED
         </div>
 
-        <div style={{ fontSize: '3.5rem', marginBottom: '0.75rem' }} aria-hidden="true">🏍️💨</div>
+        <div style={{ fontSize: '3.5rem', marginBottom: '0.75rem' }} aria-hidden="true">🏍️</div>
 
         <h1 style={{
           fontSize: 'clamp(1.75rem, 5vw, 2.25rem)',
@@ -37,7 +40,7 @@ export default function NotFound() {
           letterSpacing: '-0.02em',
           marginBottom: '0.75rem',
         }}>
-          That page took a wrong turn.
+          Something fell off the bike.
         </h1>
 
         <p style={{
@@ -46,8 +49,11 @@ export default function NotFound() {
           lineHeight: 1.65,
           marginBottom: '2rem',
         }}>
-          We couldn&apos;t find what you were looking for. The URL might be off, or
-          the page may have moved.
+          An unexpected error occurred. Try refreshing — if it keeps happening,
+          email us at{' '}
+          <a href="mailto:support@motofliip.com" style={{ color: '#e8ff47', textDecoration: 'none' }}>
+            support@motofliip.com
+          </a>.
         </p>
 
         <div style={{
@@ -56,20 +62,26 @@ export default function NotFound() {
           justifyContent: 'center',
           flexWrap: 'wrap',
         }}>
-          <Link href="/" className="mf-btn-primary" style={{
-            background: '#e8ff47',
-            color: '#0a0a0a',
-            padding: '12px 24px',
-            borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: 700,
-            textDecoration: 'none',
-            fontFamily: 'monospace',
-            letterSpacing: '0.02em',
-          }}>
-            ← Back to home
-          </Link>
-          <Link href="/dashboard" className="mf-btn-ghost" style={{
+          <button
+            type="button"
+            onClick={() => unstable_retry()}
+            className="mf-btn-primary"
+            style={{
+              background: '#e8ff47',
+              color: '#0a0a0a',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: 700,
+              fontFamily: 'monospace',
+              letterSpacing: '0.02em',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            Try again
+          </button>
+          <Link href="/" className="mf-btn-ghost" style={{
             background: 'transparent',
             color: '#f0ede6',
             padding: '12px 24px',
@@ -79,7 +91,7 @@ export default function NotFound() {
             textDecoration: 'none',
             fontFamily: 'sans-serif',
           }}>
-            Go to dashboard
+            Go home
           </Link>
         </div>
       </div>

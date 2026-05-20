@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase';
 
 export default function Login() {
@@ -8,6 +8,10 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    document.title = 'Log in · MotoFlip';
+  }, []);
 
   async function handleLogin() {
     if (!email || !password) { setError('Please fill in all fields.'); return; }
@@ -44,8 +48,9 @@ export default function Login() {
         </div>
 
         <div style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: '14px', padding: '2rem' }}>
-          <label style={{ fontSize: '12px', color: '#555', fontFamily: 'monospace', letterSpacing: '0.04em' }}>EMAIL</label>
+          <label htmlFor="login-email" style={{ fontSize: '12px', color: '#555', fontFamily: 'monospace', letterSpacing: '0.04em' }}>EMAIL</label>
           <input
+            id="login-email"
             style={inputStyle}
             type="email"
             placeholder="you@example.com"
@@ -54,8 +59,9 @@ export default function Login() {
             onKeyDown={e => e.key === 'Enter' && handleLogin()}
           />
 
-          <label style={{ fontSize: '12px', color: '#555', fontFamily: 'monospace', letterSpacing: '0.04em' }}>PASSWORD</label>
+          <label htmlFor="login-password" style={{ fontSize: '12px', color: '#555', fontFamily: 'monospace', letterSpacing: '0.04em' }}>PASSWORD</label>
           <input
+            id="login-password"
             style={inputStyle}
             type="password"
             placeholder="••••••••"
@@ -67,6 +73,7 @@ export default function Login() {
           {error && <div style={{ color: '#f87171', fontSize: '13px', marginBottom: '12px' }}>{error}</div>}
 
           <button
+            type="button"
             onClick={handleLogin}
             disabled={loading}
             style={{

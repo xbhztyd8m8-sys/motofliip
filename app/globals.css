@@ -7,6 +7,17 @@
   --mf-accent: #e8ff47;
   --mf-muted: #888;
   --mf-border: #1e1e1e;
+
+  /* ---------- Spacing scale ---------- */
+  /* Use these in future work. Don't retroactively rip out existing inline values. */
+  --mf-space-1: 4px;
+  --mf-space-2: 8px;
+  --mf-space-3: 12px;
+  --mf-space-4: 16px;
+  --mf-space-5: 24px;
+  --mf-space-6: 32px;
+  --mf-space-7: 48px;
+  --mf-space-8: 64px;
 }
 
 * { box-sizing: border-box; }
@@ -124,6 +135,43 @@ body {
   }
   /* Plan-badge text hides on tiny screens to keep the topbar in one row */
   .mf-plan-badge {
+    display: none !important;
+  }
+}
+
+/* ---------- Skeleton loading pulse ---------- */
+@keyframes mf-skeleton-pulse {
+  0%   { opacity: 0.4; }
+  50%  { opacity: 0.7; }
+  100% { opacity: 0.4; }
+}
+.mf-skeleton-bar {
+  background: #1e1e1e;
+  border-radius: 4px;
+  animation: mf-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+/* ---------- Fade-up scroll animation ---------- */
+.mf-fade-up {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.mf-fade-up.mf-in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .mf-fade-up {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------- Greeting hide on tiny screens ---------- */
+@media (max-width: 480px) {
+  .mf-greeting {
     display: none !important;
   }
 }

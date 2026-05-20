@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'FAQ',
+  description: 'Common questions about MotoFlip — pricing, accuracy, supported listings, the Chrome extension, and your data.',
+};
+
 export default function FAQ() {
   const faqs = [
     {

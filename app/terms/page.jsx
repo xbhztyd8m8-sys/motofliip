@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'Terms',
+  description: 'MotoFlip terms of service — acceptable use, subscriptions, accuracy disclaimers, and your responsibilities.',
+};
+
 export default function Terms() {
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: '#f0ede6', fontFamily: 'sans-serif' }}>
