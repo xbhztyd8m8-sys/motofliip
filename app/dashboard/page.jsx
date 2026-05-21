@@ -75,7 +75,11 @@ export default function Dashboard() {
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
   const [showUpgradeCelebration, setShowUpgradeCelebration] = useState(false);
   const [dotCount, setDotCount] = useState(0);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
+  const [portalError, setPortalError] = useState('');
   const yearInputRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   // Post-checkout celebration — runs once on mount if ?upgraded=true is set.
   // Clean the URL so a refresh doesn't re-trigger; auto-dismiss after 7s.
@@ -158,6 +162,38 @@ export default function Dashboard() {
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [tab]);
+
+  // Close profile dropdown when clicking outside of it
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  async function handleBillingPortal() {
+    setPortalLoading(true);
+    setPortalError('');
+    try {
+      const res = await fetch('/api/billing-portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user?.id, email: user?.email }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+      setPortalError(data.error || 'Could not open billing portal.');
+    } catch (e) {
+      setPortalError('Something went wrong. Try again.');
+    }
+    setPortalLoading(false);
+  }
 
   // Functional-style field setter — avoids spreading the whole form object at each call site
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -252,6 +288,21 @@ export default function Dashboard() {
   const avgProfit = pipeline.length ? Math.round(pipeline.reduce((s, p) => s + p.estimated_profit, 0) / pipeline.length) : 0;
   const hotCount = pipeline.filter(p => p.score >= 80).length;
 
+  const menuItemStyle = {
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    padding: '9px 16px', fontSize: '13px', color: '#aaa',
+    textDecoration: 'none', fontFamily: 'sans-serif',
+    cursor: 'pointer', background: 'transparent', border: 'none',
+    width: '100%', textAlign: 'left',
+  };
+  const menuBtnStyle = {
+    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+    padding: '9px 16px', fontSize: '13px',
+    fontFamily: 'sans-serif', cursor: 'pointer',
+    background: 'transparent', border: 'none',
+    width: '100%', textAlign: 'left',
+  };
+
   const inputStyle = {
     width: '100%', padding: '9px 11px', fontSize: '14px',
     border: '1px solid #222', borderRadius: '8px',
@@ -283,22 +334,10 @@ export default function Dashboard() {
             Hey {firstName} 👋
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-          {isPro ? (
-            <div className="mf-plan-badge" style={{
-              fontSize: '12px', fontWeight: 700, fontFamily: 'monospace',
-              letterSpacing: '0.08em',
-              padding: '5px 11px', borderRadius: '999px',
-              background: '#1a2e1a', color: '#4ade80',
-              border: '1px solid #2a4a2a',
-            }}>
-              PRO · UNLIMITED
-            </div>
-          ) : (
-            <>
-              <div className="mf-plan-badge" style={{ fontSize: '13px', color: '#555', padding: '6px 12px', fontFamily: 'monospace' }}>
-                Free plan · 5 analyses/mo
-              </div>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {/* Upgrade button — only shown for free users, outside the dropdown for visibility */}
+          {!isPro && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <button
                 type="button"
                 onClick={handleUpgrade}
@@ -309,20 +348,131 @@ export default function Dashboard() {
                 {upgrading ? 'Loading…' : 'Upgrade to Pro'}
               </button>
               {upgradeError && (
-                <div style={{ fontSize: '12px', color: '#f87171', maxWidth: '220px', lineHeight: 1.5 }}>
+                <div style={{ fontSize: '12px', color: '#f87171', maxWidth: '180px', lineHeight: 1.4 }}>
                   {upgradeError}
                 </div>
               )}
-            </>
+            </div>
           )}
-          <button
-            type="button"
-            onClick={handleSignOut}
-            className="mf-btn-ghost"
-            style={{ background: 'transparent', color: '#888', border: '1px solid #222', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', fontFamily: 'monospace' }}
-          >
-            Sign out
-          </button>
+
+          {/* Profile avatar + dropdown */}
+          <div ref={dropdownRef} style={{ position: 'relative' }}>
+            <button
+              type="button"
+              onClick={() => setDropdownOpen(o => !o)}
+              aria-label="Account menu"
+              style={{
+                width: '34px', height: '34px', borderRadius: '999px',
+                background: isPro ? '#1a2e1a' : '#1a1a1a',
+                border: isPro ? '1px solid #2a4a2a' : '1px solid #2a2a2a',
+                color: isPro ? '#4ade80' : '#e8ff47',
+                fontSize: '13px', fontWeight: '700', fontFamily: 'monospace',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                letterSpacing: 0,
+              }}
+            >
+              {firstName[0]?.toUpperCase() || '?'}
+            </button>
+
+            {dropdownOpen && (
+              <div style={{
+                position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                background: '#111', border: '1px solid #222', borderRadius: '12px',
+                minWidth: '240px', zIndex: 200,
+                boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+                overflow: 'hidden',
+              }}>
+                {/* User info header */}
+                <div style={{ padding: '14px 16px', borderBottom: '1px solid #1a1a1a' }}>
+                  <div style={{ fontSize: '13px', fontWeight: '600', color: '#f0ede6', marginBottom: '3px' }}>
+                    {user?.user_metadata?.full_name || firstName}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#555', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                    {user?.email}
+                  </div>
+                  <div style={{
+                    display: 'inline-block', marginTop: '8px',
+                    fontSize: '11px', fontWeight: 700, fontFamily: 'monospace',
+                    letterSpacing: '0.06em', padding: '3px 10px', borderRadius: '999px',
+                    background: isPro ? '#1a2e1a' : '#1a1a1a',
+                    color: isPro ? '#4ade80' : '#888',
+                    border: isPro ? '1px solid #2a4a2a' : '1px solid #222',
+                  }}>
+                    {isPro ? '✓ Pro · Unlimited' : 'Free · 5 analyses/mo'}
+                  </div>
+                </div>
+
+                {/* Menu items */}
+                <div style={{ padding: '6px 0' }}>
+                  <a href="/faq" style={menuItemStyle}>
+                    <span>FAQ</span>
+                    <span style={{ color: '#333' }}>→</span>
+                  </a>
+                  <a href="/privacy" style={menuItemStyle}>
+                    <span>Privacy Policy</span>
+                    <span style={{ color: '#333' }}>→</span>
+                  </a>
+                  <a href="/terms" style={menuItemStyle}>
+                    <span>Terms of Service</span>
+                    <span style={{ color: '#333' }}>→</span>
+                  </a>
+                </div>
+
+                {/* Billing section — Pro users only */}
+                {isPro && (
+                  <div style={{ borderTop: '1px solid #1a1a1a', padding: '6px 0' }}>
+                    <button
+                      type="button"
+                      onClick={handleBillingPortal}
+                      disabled={portalLoading}
+                      style={{ ...menuBtnStyle, color: portalLoading ? '#555' : '#f0ede6' }}
+                    >
+                      <span>{portalLoading ? 'Opening…' : 'Manage billing'}</span>
+                      <span style={{ color: '#333' }}>→</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleBillingPortal}
+                      disabled={portalLoading}
+                      style={{ ...menuBtnStyle, color: '#f87171' }}
+                    >
+                      <span>Cancel membership</span>
+                    </button>
+                    {portalError && (
+                      <div style={{ fontSize: '12px', color: '#f87171', padding: '4px 16px 8px', lineHeight: 1.5 }}>
+                        {portalError}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Upgrade nudge — free users */}
+                {!isPro && (
+                  <div style={{ borderTop: '1px solid #1a1a1a', padding: '6px 0' }}>
+                    <button
+                      type="button"
+                      onClick={() => { setDropdownOpen(false); handleUpgrade(); }}
+                      style={{ ...menuBtnStyle, color: '#e8ff47' }}
+                    >
+                      <span>Upgrade to Pro — $9/mo</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Sign out */}
+                <div style={{ borderTop: '1px solid #1a1a1a', padding: '6px 0' }}>
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    style={{ ...menuBtnStyle, color: '#666' }}
+                  >
+                    <span>Sign out</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
