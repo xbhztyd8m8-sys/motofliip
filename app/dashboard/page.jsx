@@ -63,7 +63,8 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  const [form, setForm] = useState({ year: '', make: '', model: '', price: '', mileage: '', condition: '', description: '' });
+  const [form, setForm] = useState({ year: '', make: '', model: '', price: '', mileage: '', condition: '', description: '', listingUrl: '' });
+  const [photos, setPhotos] = useState([]); // [{ preview, base64, mediaType }]
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
@@ -153,14 +154,11 @@ export default function Dashboard() {
   // Esc key clears the form and result while on analyze tab
   useEffect(() => {
     function onKeyDown(e) {
-      if (e.key === 'Escape' && tab === 'analyze') {
-        setForm({ year: '', make: '', model: '', price: '', mileage: '', condition: '', description: '' });
-        setResult(null);
-        setError('');
-      }
+      if (e.key === 'Escape' && tab === 'analyze') clearForm();
     }
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
 
   // Close profile dropdown when clicking outside of it
@@ -197,6 +195,50 @@ export default function Dashboard() {
 
   // Functional-style field setter — avoids spreading the whole form object at each call site
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  // Resize an image file to max 1024px before encoding — keeps base64 payload manageable
+  function resizeImage(file) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const MAX = 1024;
+        let w = img.width, h = img.height;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+          else { w = Math.round(w * MAX / h); h = MAX; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        resolve({ preview: dataUrl, base64: dataUrl.split(',')[1], mediaType: 'image/jpeg' });
+      };
+      img.src = url;
+    });
+  }
+
+  async function handlePhotoAdd(e) {
+    const files = Array.from(e.target.files);
+    const slots = 4 - photos.length;
+    const toProcess = files.slice(0, slots);
+    const resized = await Promise.all(toProcess.map(resizeImage));
+    setPhotos(prev => [...prev, ...resized]);
+    e.target.value = '';
+  }
+
+  function removePhoto(idx) {
+    setPhotos(prev => prev.filter((_, i) => i !== idx));
+  }
+
+  function clearForm() {
+    setForm({ year: '', make: '', model: '', price: '', mileage: '', condition: '', description: '', listingUrl: '' });
+    setPhotos([]);
+    setResult(null);
+    setError('');
+  }
 
   function tryExampleListing() {
     setForm(EXAMPLE_LISTING);
@@ -247,7 +289,10 @@ export default function Dashboard() {
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          images: photos.map(p => ({ base64: p.base64, mediaType: p.mediaType })),
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Something went wrong');
@@ -257,6 +302,8 @@ export default function Dashboard() {
         bikeLabel: [form.year, form.make, form.model].filter(Boolean).join(' '),
         askPrice: parseInt(form.price),
         mileage: form.mileage,
+        listingUrl: form.listingUrl || '',
+        photos: photos.map(p => p.preview),
       });
     } catch (e) {
       setError(e.message);
@@ -587,6 +634,18 @@ export default function Dashboard() {
               </div>
             )}
 
+            {/* LISTING URL */}
+            <div style={{ marginBottom: '12px' }}>
+              <label style={labelStyle}>LISTING URL <span style={{ color: '#333' }}>— optional</span></label>
+              <input
+                style={inputStyle}
+                type="url"
+                placeholder="https://facebook.com/marketplace/item/..."
+                value={form.listingUrl}
+                onChange={e => set('listingUrl', e.target.value)}
+              />
+            </div>
+
             <div className="mf-grid-2" style={{ marginBottom: '12px' }}>
               <div>
                 <label style={labelStyle}>YEAR</label>
@@ -624,7 +683,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ marginBottom: '12px' }}>
               <label style={labelStyle}>DESCRIPTION / NOTES</label>
               <textarea
                 style={{ ...inputStyle, minHeight: '90px', resize: 'vertical', lineHeight: '1.6' }}
@@ -632,6 +691,59 @@ export default function Dashboard() {
                 value={form.description}
                 onChange={e => set('description', e.target.value)}
               />
+            </div>
+
+            {/* PHOTO UPLOAD */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={labelStyle}>
+                PHOTOS <span style={{ color: '#333' }}>— optional · up to 4 · AI scans for damage &amp; condition</span>
+              </label>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                {photos.map((p, i) => (
+                  <div key={i} style={{ position: 'relative', width: '72px', height: '72px' }}>
+                    <img
+                      src={p.preview}
+                      alt={`Photo ${i + 1}`}
+                      style={{ width: '72px', height: '72px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #222' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removePhoto(i)}
+                      aria-label="Remove photo"
+                      style={{
+                        position: 'absolute', top: '-6px', right: '-6px',
+                        width: '18px', height: '18px', borderRadius: '999px',
+                        background: '#f87171', color: '#fff', border: 'none',
+                        fontSize: '11px', cursor: 'pointer', lineHeight: 1,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}
+                    >×</button>
+                  </div>
+                ))}
+                {photos.length < 4 && (
+                  <label style={{
+                    width: '72px', height: '72px', borderRadius: '8px',
+                    border: '1px dashed #333', display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                    color: '#444', fontSize: '11px', fontFamily: 'monospace', gap: '4px',
+                  }}>
+                    <span style={{ fontSize: '20px' }}>+</span>
+                    <span>Add</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      style={{ display: 'none' }}
+                      onChange={handlePhotoAdd}
+                    />
+                  </label>
+                )}
+              </div>
+              {photos.length > 0 && (
+                <div style={{ fontSize: '11px', color: '#555', fontFamily: 'monospace', marginTop: '6px' }}>
+                  {photos.length}/4 photo{photos.length !== 1 ? 's' : ''} · AI will scan {photos.length > 1 ? 'all of them' : 'it'} for damage, wear, and condition
+                </div>
+              )}
             </div>
 
             {error && <div style={{ color: '#f87171', fontSize: '13px', marginBottom: '12px' }}>{error}</div>}
@@ -654,7 +766,7 @@ export default function Dashboard() {
               </button>
               <button
                 type="button"
-                onClick={() => { setForm({ year: '', make: '', model: '', price: '', mileage: '', condition: '', description: '' }); setResult(null); setError(''); }}
+                onClick={clearForm}
                 className="mf-btn-ghost"
                 style={{ background: 'transparent', color: '#888', border: '1px solid #222', padding: '12px 20px', borderRadius: '8px', fontSize: '14px', cursor: 'pointer' }}
               >
@@ -705,11 +817,23 @@ export default function Dashboard() {
             {/* RESULT */}
             {result && (
               <div className="mf-card" style={{ marginTop: '2rem', background: '#111', border: '1px solid #1e1e1e', borderRadius: '14px', padding: '1.5rem' }}>
+                {/* Photo strip */}
+                {result.photos?.length > 0 && (
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                    {result.photos.map((src, i) => (
+                      <img key={i} src={src} alt={`Photo ${i + 1}`} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #222' }} />
+                    ))}
+                  </div>
+                )}
+
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', gap: '12px', flexWrap: 'wrap' }}>
                   <div>
                     <div style={{ fontSize: '18px', fontWeight: '700', fontFamily: 'Georgia, serif' }}>{result.bikeLabel}</div>
                     <div style={{ fontSize: '13px', color: '#555', marginTop: '3px' }}>
                       Listed at ${result.askPrice.toLocaleString()}{result.mileage ? ` · ${parseInt(result.mileage).toLocaleString()} mi` : ''}
+                      {result.listingUrl && (
+                        <> · <a href={result.listingUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#e8ff47', textDecoration: 'none' }}>View listing →</a></>
+                      )}
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
@@ -803,10 +927,22 @@ export default function Dashboard() {
             ) : (
               pipeline.map(r => (
                 <div key={r.id} className="mf-card" style={{ background: '#111', border: '1px solid #1e1e1e', borderRadius: '12px', padding: '1.25rem', marginBottom: '10px' }}>
+                  {r.photos?.length > 0 && (
+                    <div style={{ display: 'flex', gap: '6px', marginBottom: '10px', flexWrap: 'wrap' }}>
+                      {r.photos.map((src, i) => (
+                        <img key={i} src={src} alt={`Photo ${i + 1}`} style={{ width: '56px', height: '56px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #222' }} />
+                      ))}
+                    </div>
+                  )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px', gap: '10px', flexWrap: 'wrap' }}>
                     <div>
                       <div style={{ fontSize: '15px', fontWeight: '600', fontFamily: 'Georgia, serif' }}>{r.bikeLabel}</div>
-                      <div style={{ fontSize: '12px', color: '#555', marginTop: '2px' }}>Ask: ${r.askPrice.toLocaleString()} · Offer: ${r.suggested_offer.toLocaleString()}</div>
+                      <div style={{ fontSize: '12px', color: '#555', marginTop: '2px' }}>
+                        Ask: ${r.askPrice.toLocaleString()} · Offer: ${r.suggested_offer.toLocaleString()}
+                        {r.listingUrl && (
+                          <> · <a href={r.listingUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#e8ff47', textDecoration: 'none' }}>View listing →</a></>
+                        )}
+                      </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <ScoreBadge score={r.score} />

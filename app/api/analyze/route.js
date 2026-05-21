@@ -4,17 +4,22 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+// Allow up to 60s for image analysis
+export const maxDuration = 60;
+
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { year, make, model, price, mileage, condition, description } = body;
+    const { year, make, model, price, mileage, condition, description, listingUrl, images } = body;
 
     if (!make || !model || !price) {
       return Response.json({ error: 'Make, model, and price are required.' }, { status: 400 });
     }
 
-    const prompt = `You are a motorcycle flip expert with deep knowledge of US used motorcycle market values. Analyze this listing and respond ONLY with a valid JSON object — no markdown, no backticks, no preamble, no explanation.
+    const hasImages = images && images.length > 0;
 
+    const textPrompt = `You are a motorcycle flip expert with deep knowledge of US used motorcycle market values. Analyze this listing and respond ONLY with a valid JSON object — no markdown, no backticks, no preamble, no explanation.
+${hasImages ? `\nYou have been provided ${images.length} photo(s) of the motorcycle. Carefully analyze them for visible damage, rust, crash damage, modifications, wear on tires/chain/sprockets, cleanliness, and anything that affects value or saleability. Factor your visual observations into every field — scores, flags, summary, and negotiation tip.\n` : ''}
 Listing details:
 - Year: ${year || 'unknown'}
 - Make: ${make}
@@ -23,6 +28,7 @@ Listing details:
 - Mileage: ${mileage || 'unknown'}
 - Condition: ${condition || 'not specified'}
 - Description/notes: ${description || 'none provided'}
+${listingUrl ? `- Listing URL: ${listingUrl}` : ''}
 
 Return exactly this JSON structure and nothing else:
 {
@@ -38,10 +44,28 @@ Return exactly this JSON structure and nothing else:
   "negotiation_tip": "<one specific, actionable tip for negotiating with this seller>"
 }`;
 
+    // Build content array — images first so Claude sees them before the text prompt
+    const content = [];
+
+    if (hasImages) {
+      for (const img of images) {
+        content.push({
+          type: 'image',
+          source: {
+            type: 'base64',
+            media_type: img.mediaType,
+            data: img.base64,
+          },
+        });
+      }
+    }
+
+    content.push({ type: 'text', text: textPrompt });
+
     const message = await client.messages.create({
       model: 'claude-haiku-4-5',
       max_tokens: 1024,
-      messages: [{ role: 'user', content: prompt }],
+      messages: [{ role: 'user', content }],
     });
 
     const text = message.content[0].text;
