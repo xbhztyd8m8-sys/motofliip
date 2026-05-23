@@ -11,7 +11,7 @@ export default function FAQ() {
     },
     {
       q: 'Does it work on Facebook Marketplace and Craigslist?',
-      a: 'Yes. The MotoFlip Chrome extension works directly on Facebook Marketplace and Craigslist motorcycle listings. It automatically reads the listing details and gives you a flip score without leaving the page.'
+      a: 'Yes. The MotoFlip Chrome extension — launching soon — will work directly on Facebook Marketplace and Craigslist listings, giving you a flip score without leaving the page. In the meantime, you can analyze any listing from the web app dashboard.'
     },
     {
       q: 'How accurate are the profit estimates?',
@@ -23,7 +23,7 @@ export default function FAQ() {
     },
     {
       q: 'What does Pro include?',
-      a: 'Pro gives you unlimited analyses, access to the Chrome extension, unlimited pipeline tracking, market comps, and profit tracking. It\'s $9/month and you can cancel anytime.'
+      a: 'Pro gives you unlimited analyses, access to the Chrome extension (coming soon), unlimited pipeline tracking, market comps, and profit tracking. It\'s $9/month and you can cancel anytime.'
     },
     {
       q: 'Can I cancel my Pro subscription?',

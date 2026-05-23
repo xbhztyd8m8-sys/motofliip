@@ -1,7 +1,6 @@
 import FadeIn from '@/components/FadeIn';
 
-// TODO: replace with real Chrome Web Store URL once the extension is published
-const EXTENSION_URL = 'https://chrome.google.com/webstore/detail/motofliip';
+const EXTENSION_URL = '#extension';
 
 export const metadata = {
   title: 'MotoFlip — AI Flip Scores for Motorcycle Listings',
@@ -106,7 +105,7 @@ export default function Home() {
             letterSpacing: '0.06em',
             textDecoration: 'none',
           }}>
-            🧩{"  "}CHROME EXTENSION — ANALYZE IN ONE CLICK
+            🧩{"  "}CHROME EXTENSION — COMING SOON
           </a>
         </div>
 
@@ -222,7 +221,7 @@ export default function Home() {
               marginBottom: '1.25rem',
               letterSpacing: '0.08em',
             }}>
-              🧩 CHROME EXTENSION
+              🧩 CHROME EXTENSION — COMING SOON
             </div>
             <h2 style={{
               fontSize: 'clamp(1.75rem, 5vw, 2.75rem)',
@@ -242,26 +241,20 @@ export default function Home() {
               lineHeight: 1.65,
               fontFamily: 'sans-serif',
             }}>
-              Stop switching tabs. The MotoFlip Chrome extension puts an instant AI analysis
-              directly on every listing you browse — no copy-pasting, no waiting.
+              The MotoFlip Chrome extension is launching soon — it puts an instant AI analysis
+              directly on every listing you browse. No copy-pasting, no tab switching.
             </p>
-            {/* CTA — swap EXTENSION_URL when the extension is live */}
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <a
-                href={EXTENSION_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '8px',
-                  background: '#4ade80', color: '#0a0a0a',
-                  padding: '13px 28px', borderRadius: '8px',
-                  fontSize: '15px', fontWeight: '700',
-                  textDecoration: 'none', fontFamily: 'monospace',
-                  letterSpacing: '0.02em',
-                  boxShadow: '0 0 32px rgba(74,222,128,0.2)',
-                }}
-              >
-                🧩 Add to Chrome — it&apos;s free
+              <a href="/signup" style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                background: '#4ade80', color: '#0a0a0a',
+                padding: '13px 28px', borderRadius: '8px',
+                fontSize: '15px', fontWeight: '700',
+                textDecoration: 'none', fontFamily: 'monospace',
+                letterSpacing: '0.02em',
+                boxShadow: '0 0 32px rgba(74,222,128,0.2)',
+              }}>
+                🧩 Sign up to get notified at launch
               </a>
               <a href="/signup" style={{
                 display: 'inline-flex', alignItems: 'center',
@@ -270,7 +263,7 @@ export default function Home() {
                 fontSize: '15px', border: '1px solid #2a2a2a',
                 textDecoration: 'none', fontFamily: 'sans-serif',
               }}>
-                Use the web app instead
+                Use the web app now
               </a>
             </div>
             <p style={{ fontSize: '12px', color: '#444', fontFamily: 'monospace', marginTop: '12px' }}>
@@ -356,28 +349,28 @@ export default function Home() {
                 fontFamily: 'monospace', fontSize: '11px',
                 letterSpacing: '0.08em', color: '#4ade80', marginBottom: '1.5rem',
               }}>
-                HOW TO INSTALL
+                HOW IT WORKS
               </div>
               {[
                 {
                   n: '01',
                   title: 'Add to Chrome',
-                  body: 'Click "Add to Chrome" above and hit "Add extension" in the popup. Takes about 5 seconds. No account required to install.',
+                  body: 'One click to install. No account required. The 🏍️ button pins to your toolbar and is ready instantly.',
                 },
                 {
                   n: '02',
-                  title: 'Pin it to your toolbar',
-                  body: 'Click the puzzle piece icon in Chrome → find MotoFlip → click the pin. Now the 🏍️ button is always one click away.',
-                },
-                {
-                  n: '03',
                   title: 'Browse Marketplace or Craigslist',
                   body: 'Open any motorcycle listing on Facebook Marketplace, Craigslist, or Cycle Trader. The MotoFlip button appears automatically.',
                 },
                 {
-                  n: '04',
+                  n: '03',
                   title: 'Get your flip score instantly',
                   body: 'Click the button. In about 2 seconds you\'ll see the flip score, suggested offer price, estimated profit, and any red flags — right on the page.',
+                },
+                {
+                  n: '04',
+                  title: 'Save hot deals with one click',
+                  body: 'Spotted a deal? Save it straight to your pipeline without leaving the listing. Track everything in your dashboard.',
                 },
               ].map(({ n, title, body }) => (
                 <div key={n} style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'flex-start' }}>
@@ -395,20 +388,15 @@ export default function Home() {
                 </div>
               ))}
 
-              <a
-                href={EXTENSION_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: '8px',
-                  background: '#4ade80', color: '#0a0a0a',
-                  padding: '12px 24px', borderRadius: '8px',
-                  fontSize: '14px', fontWeight: '700',
-                  textDecoration: 'none', fontFamily: 'monospace',
-                  marginTop: '0.5rem',
-                }}
-              >
-                🧩 Add to Chrome — free
+              <a href="/signup" style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                background: '#4ade80', color: '#0a0a0a',
+                padding: '12px 24px', borderRadius: '8px',
+                fontSize: '14px', fontWeight: '700',
+                textDecoration: 'none', fontFamily: 'monospace',
+                marginTop: '0.5rem',
+              }}>
+                🧩 Get notified at launch
               </a>
               <div style={{ fontSize: '12px', color: '#333', fontFamily: 'monospace', marginTop: '10px' }}>
                 Works on Facebook Marketplace · Craigslist · Cycle Trader
@@ -429,7 +417,7 @@ export default function Home() {
               { icon: '⚡', title: '~2 second analysis', body: 'AI runs the moment you click. No waiting, no loading screens.' },
               { icon: '🔍', title: 'Stays on the listing', body: 'No new tabs. The panel overlays the page so you never lose your place.' },
               { icon: '💾', title: 'Save with one click', body: 'Hot deal? Save it straight to your pipeline without leaving the listing.' },
-              { icon: '🔒', title: 'Free to install', body: 'The extension is free. Pro subscription unlocks unlimited analyses.' },
+              { icon: '🔒', title: 'Free to install', body: 'The extension will be free. Pro subscription unlocks unlimited analyses.' },
             ].map(({ icon, title, body }) => (
               <div key={title} style={{
                 background: '#0d1a0d',
@@ -483,7 +471,6 @@ export default function Home() {
               }}>
                 Built by a flipper, for flippers.
               </h2>
-              {/* TODO: replace with real founder story */}
               <p style={{
                 fontSize: '15px',
                 color: '#888',
@@ -520,86 +507,6 @@ export default function Home() {
         </FadeIn>
       </section>
 
-      {/* TESTIMONIALS */}
-      {/* TODO: replace placeholder quotes below with real testimonials from actual users.
-           FTC guidelines require testimonials to be genuine — do not publish these as-is. */}
-      <section className="mf-section" style={{
-        maxWidth: '860px',
-        margin: '0 auto',
-        padding: '4rem 2rem',
-        borderTop: '1px solid #1a1a1a',
-      }}>
-        <FadeIn>
-          <div style={{
-            fontFamily: 'monospace',
-            fontSize: '11px',
-            letterSpacing: '0.08em',
-            color: '#e8ff47',
-            textAlign: 'center',
-            marginBottom: '0.5rem',
-          }}>
-            WHAT FLIPPERS ARE SAYING
-          </div>
-          <h2 style={{
-            fontSize: 'clamp(1.5rem, 4vw, 2rem)',
-            fontWeight: 700,
-            fontFamily: 'Georgia, serif',
-            letterSpacing: '-0.02em',
-            textAlign: 'center',
-            marginBottom: '2.5rem',
-          }}>
-            Real results from real flippers.
-          </h2>
-        </FadeIn>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
-          {[
-            {
-              quote: "I used to spend 45 minutes vetting a single listing. MotoFlip cuts that to under 2 minutes. Made back my Pro subscription on the first flip.",
-              name: "Marcus T.",
-              detail: "Flips 4–6 bikes/year",
-            },
-            {
-              quote: "The negotiation tips alone are worth it. I offered $400 less than asking on my last buy because MotoFlip flagged overpricing — seller took it.",
-              name: "Rachel K.",
-              detail: "Weekend flipper",
-            },
-            {
-              quote: "Finally stopped losing deals to analysis paralysis. The flip score gives me confidence to move fast when the deal is right.",
-              name: "Dave M.",
-              detail: "Marketplace power buyer",
-            },
-          ].map(({ quote, name, detail }) => (
-            <FadeIn key={name}>
-              <div className="mf-card" style={{
-                background: '#111',
-                border: '1px solid #1e1e1e',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: '1rem',
-              }}>
-                <p style={{
-                  fontSize: '14px',
-                  color: '#aaa',
-                  lineHeight: 1.75,
-                  fontFamily: 'sans-serif',
-                  fontStyle: 'italic',
-                  margin: 0,
-                }}>
-                  &ldquo;{quote}&rdquo;
-                </p>
-                <div>
-                  <div style={{ fontSize: '13px', fontWeight: '600', color: '#f0ede6', fontFamily: 'sans-serif' }}>{name}</div>
-                  <div style={{ fontSize: '12px', color: '#555', fontFamily: 'monospace', marginTop: '2px' }}>{detail}</div>
-                </div>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </section>
 
       {/* HOW IT WORKS */}
       <section id="how" className="mf-section" style={{
@@ -759,7 +666,7 @@ export default function Home() {
               <div style={{ fontSize: '13px', color: '#e8ff47', fontFamily: 'monospace', marginBottom: '6px' }}>PRO</div>
               <div style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '4px' }}>$9</div>
               <div style={{ fontSize: '13px', color: '#555', marginBottom: '1.5rem' }}>per month · locked in for life</div>
-              {['Unlimited analyses', 'Unlimited pipeline', 'Chrome extension', 'Market comps view', 'Profit tracking + sold log'].map(f => (
+              {['Unlimited analyses', 'Unlimited pipeline', 'Chrome extension (coming soon)', 'Market comps view', 'Profit tracking + sold log'].map(f => (
                 <div key={f} style={{ fontSize: '13px', color: '#ccc', marginBottom: '8px', fontFamily: 'sans-serif' }}>✓ {f}</div>
               ))}
               <a href="/signup?plan=pro" className="mf-btn-primary" style={{

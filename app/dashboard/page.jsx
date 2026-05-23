@@ -6,6 +6,21 @@ import { createClient } from '@/lib/supabase';
 
 const MAKES = ['Honda','Yamaha','Kawasaki','Suzuki','Harley-Davidson','BMW','KTM','Ducati','Triumph','Royal Enfield','Indian','Other'];
 const CONDITIONS = ['Excellent','Good','Fair','Poor / project','Non-running'];
+const TITLE_STATUSES = ['Clean title','Salvage title','Rebuilt/reconstructed title','No title (bill of sale only)','Title in hand — not yet transferred'];
+const REGIONS = [
+  'Los Angeles / San Diego',
+  'San Francisco / Sacramento',
+  'Seattle / Portland',
+  'Phoenix / Las Vegas',
+  'Dallas / Houston / Austin',
+  'Atlanta / Nashville',
+  'Miami / Tampa / Orlando',
+  'Chicago / Detroit',
+  'Minneapolis / Kansas City',
+  'Denver / Salt Lake City',
+  'New York / DC / Philadelphia',
+  'Boston / Providence',
+];
 
 const EXAMPLE_LISTING = {
   year: '2019',
@@ -14,14 +29,17 @@ const EXAMPLE_LISTING = {
   price: '3200',
   mileage: '9400',
   condition: 'Good',
+  titleStatus: 'Clean title',
+  region: 'Atlanta / Nashville',
   description: 'Single owner, garage kept. Recent oil change and new chain. Small scratch on the tank from a tip-over in the driveway.',
 };
 
 function ScoreBadge({ score }) {
   const tier =
     score >= 80 ? { label: '🔥 Hot flip', bg: '#1a2e1a', color: '#4ade80' } :
-    score >= 60 ? { label: '👍 Good pick', bg: '#1a1f2e', color: '#60a5fa' } :
-    score >= 40 ? { label: '⚠️ Marginal', bg: '#2e2a1a', color: '#fbbf24' } :
+    score >= 70 ? { label: '👍 Good flip', bg: '#1a1f2e', color: '#60a5fa' } :
+    score >= 60 ? { label: '⚠️ Marginal', bg: '#2e2a1a', color: '#fbbf24' } :
+    score >= 40 ? { label: '🎲 Risky', bg: '#2e2010', color: '#fb923c' } :
                   { label: '❌ Pass', bg: '#2e1a1a', color: '#f87171' };
   return (
     <span style={{
@@ -63,7 +81,7 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  const [form, setForm] = useState({ year: '', make: '', model: '', price: '', mileage: '', condition: '', description: '', listingUrl: '' });
+  const [form, setForm] = useState({ year: '', make: '', model: '', price: '', mileage: '', condition: '', titleStatus: '', region: '', description: '', listingUrl: '' });
   const [photos, setPhotos] = useState([]); // [{ preview, base64, mediaType }]
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -234,7 +252,7 @@ export default function Dashboard() {
   }
 
   function clearForm() {
-    setForm({ year: '', make: '', model: '', price: '', mileage: '', condition: '', description: '', listingUrl: '' });
+    setForm({ year: '', make: '', model: '', price: '', mileage: '', condition: '', titleStatus: '', region: '', description: '', listingUrl: '' });
     setPhotos([]);
     setResult(null);
     setError('');
@@ -291,6 +309,8 @@ export default function Dashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
+          region: form.region || null,
+          titleStatus: form.titleStatus || null,
           images: photos.map(p => ({ base64: p.base64, mediaType: p.mediaType })),
         }),
       });
@@ -303,6 +323,8 @@ export default function Dashboard() {
         askPrice: parseInt(form.price),
         mileage: form.mileage,
         listingUrl: form.listingUrl || '',
+        region: form.region || null,
+        titleStatus: form.titleStatus || null,
         photos: photos.map(p => p.preview),
       });
     } catch (e) {
@@ -332,7 +354,7 @@ export default function Dashboard() {
   // Show the onboarding card only on first visit (no dismissal, no result, empty pipeline, analyze tab)
   const showOnboarding = !onboardingDismissed && !result && pipeline.length === 0 && tab === 'analyze';
 
-  const avgProfit = pipeline.length ? Math.round(pipeline.reduce((s, p) => s + p.estimated_profit, 0) / pipeline.length) : 0;
+  const avgProfit = pipeline.length ? Math.round(pipeline.reduce((s, p) => s + (p.net_profit_estimate ?? p.estimated_profit), 0) / pipeline.length) : 0;
   const hotCount = pipeline.filter(p => p.score >= 80).length;
 
   const menuItemStyle = {
@@ -683,6 +705,23 @@ export default function Dashboard() {
               </div>
             </div>
 
+            <div className="mf-grid-2" style={{ marginBottom: '12px' }}>
+              <div>
+                <label style={labelStyle}>TITLE STATUS <span style={{ color: '#f87171', fontWeight: 700 }}>— critical</span></label>
+                <select style={inputStyle} value={form.titleStatus} onChange={e => set('titleStatus', e.target.value)}>
+                  <option value="">Select…</option>
+                  {TITLE_STATUSES.map(t => <option key={t}>{t}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={labelStyle}>YOUR REGION <span style={{ color: '#555' }}>— affects pricing</span></label>
+                <select style={inputStyle} value={form.region} onChange={e => set('region', e.target.value)}>
+                  <option value="">Select region…</option>
+                  {REGIONS.map(r => <option key={r}>{r}</option>)}
+                </select>
+              </div>
+            </div>
+
             <div style={{ marginBottom: '12px' }}>
               <label style={labelStyle}>DESCRIPTION / NOTES</label>
               <textarea
@@ -831,10 +870,18 @@ export default function Dashboard() {
                     <div style={{ fontSize: '18px', fontWeight: '700', fontFamily: 'Georgia, serif' }}>{result.bikeLabel}</div>
                     <div style={{ fontSize: '13px', color: '#555', marginTop: '3px' }}>
                       Listed at ${result.askPrice.toLocaleString()}{result.mileage ? ` · ${parseInt(result.mileage).toLocaleString()} mi` : ''}
+                      {result.estimated_market_value ? ` · Market value ~$${result.estimated_market_value.toLocaleString()}` : ''}
                       {result.listingUrl && (
                         <> · <a href={result.listingUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#e8ff47', textDecoration: 'none' }}>View listing →</a></>
                       )}
                     </div>
+                    {(result.region || result.titleStatus) && (
+                      <div style={{ fontSize: '11px', color: '#444', fontFamily: 'monospace', marginTop: '4px', letterSpacing: '0.02em' }}>
+                        {result.region && <span>{result.region}</span>}
+                        {result.region && result.titleStatus && <span> · </span>}
+                        {result.titleStatus && <span>{result.titleStatus}</span>}
+                      </div>
+                    )}
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <ScoreBadge score={result.score} />
@@ -842,12 +889,44 @@ export default function Dashboard() {
                   </div>
                 </div>
 
+                {/* Chips row — market demand + confidence */}
+                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                  {result.market_demand && (
+                    <span style={{
+                      fontSize: '11px', fontFamily: 'monospace', fontWeight: '700',
+                      letterSpacing: '0.06em', padding: '3px 10px', borderRadius: '999px',
+                      background: result.market_demand === 'High' ? '#1a2e1a' : result.market_demand === 'Low' || result.market_demand === 'Niche' ? '#2e1a1a' : '#1a1f2e',
+                      color: result.market_demand === 'High' ? '#4ade80' : result.market_demand === 'Low' || result.market_demand === 'Niche' ? '#f87171' : '#60a5fa',
+                      border: result.market_demand === 'High' ? '1px solid #2a4a2a' : result.market_demand === 'Low' || result.market_demand === 'Niche' ? '1px solid #4a2a2a' : '1px solid #2a3a4a',
+                    }}>
+                      {result.market_demand === 'High' ? '🔥' : result.market_demand === 'Low' ? '🐢' : result.market_demand === 'Niche' ? '🎯' : '📊'} {result.market_demand} demand
+                    </span>
+                  )}
+                  {result.confidence && (
+                    <span style={{
+                      fontSize: '11px', fontFamily: 'monospace', fontWeight: '700',
+                      letterSpacing: '0.06em', padding: '3px 10px', borderRadius: '999px',
+                      background: '#1a1a1a', color: result.confidence === 'High' ? '#888' : result.confidence === 'Low' ? '#fbbf24' : '#666',
+                      border: '1px solid #2a2a2a',
+                    }}>
+                      {result.confidence === 'Low' ? '⚠️' : ''} {result.confidence} confidence
+                    </span>
+                  )}
+                </div>
+
                 <div className="mf-grid-4 mf-stats-4" style={{ marginBottom: '1rem', gap: '8px' }}>
                   <StatBox label="SUGGEST OFFER" value={`$${result.suggested_offer.toLocaleString()}`} />
                   <StatBox label="SELL FOR ~" value={`$${result.estimated_sell_price.toLocaleString()}`} />
-                  <StatBox label="EST. PROFIT" value={`$${result.estimated_profit.toLocaleString()}`} green />
+                  <StatBox label="NET PROFIT EST." value={`$${(result.net_profit_estimate ?? result.estimated_profit).toLocaleString()}`} green />
                   <StatBox label="TIME TO SELL" value={result.days_to_sell_estimate} />
                 </div>
+
+                {/* Cost breakdown note */}
+                {result.estimated_costs != null && (
+                  <div style={{ fontSize: '11px', color: '#444', fontFamily: 'monospace', marginBottom: '1rem', letterSpacing: '0.02em' }}>
+                    Gross profit ~${result.estimated_profit?.toLocaleString()} · Est. costs ~${result.estimated_costs?.toLocaleString()} (title, prep, transport) · Net ~${(result.net_profit_estimate ?? result.estimated_profit).toLocaleString()}
+                  </div>
+                )}
 
                 <div style={{ background: '#161616', borderRadius: '8px', padding: '12px 14px', fontSize: '13px', lineHeight: '1.7', color: '#aaa', marginBottom: '1rem' }}>
                   {result.summary}
@@ -860,9 +939,22 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <div style={{ fontSize: '11px', fontFamily: 'monospace', color: '#f87171', marginBottom: '8px', letterSpacing: '0.04em' }}>RED FLAGS</div>
-                    {result.red_flags.map((f, i) => <div key={i} style={{ fontSize: '13px', color: '#ccc', marginBottom: '5px' }}>✗ {f}</div>)}
+                    {result.red_flags?.length > 0
+                      ? result.red_flags.map((f, i) => <div key={i} style={{ fontSize: '13px', color: '#ccc', marginBottom: '5px' }}>✗ {f}</div>)
+                      : <div style={{ fontSize: '13px', color: '#555' }}>None identified</div>
+                    }
                   </div>
                 </div>
+
+                {/* Inspect checklist */}
+                {result.inspect_checklist?.length > 0 && (
+                  <div style={{ background: '#1a1500', border: '1px solid #2a2200', borderRadius: '8px', padding: '12px 14px', marginBottom: '1rem' }}>
+                    <div style={{ fontSize: '11px', fontFamily: 'monospace', color: '#fbbf24', marginBottom: '8px', letterSpacing: '0.04em' }}>🔍 WHAT TO INSPECT</div>
+                    {result.inspect_checklist.map((item, i) => (
+                      <div key={i} style={{ fontSize: '13px', color: '#ccc', marginBottom: '5px', lineHeight: '1.5' }}>· {item}</div>
+                    ))}
+                  </div>
+                )}
 
                 <div style={{ background: '#0f1a2e', borderRadius: '8px', padding: '12px 14px', fontSize: '13px', color: '#93c5fd', lineHeight: '1.65', marginBottom: '1rem' }}>
                   <span style={{ fontWeight: '700' }}>Negotiation tip: </span>{result.negotiation_tip}
@@ -950,7 +1042,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="mf-grid-4 mf-stats-4" style={{ gap: '8px' }}>
-                    <StatBox label="EST. PROFIT" value={`$${r.estimated_profit.toLocaleString()}`} green />
+                    <StatBox label="NET PROFIT EST." value={`$${(r.net_profit_estimate ?? r.estimated_profit).toLocaleString()}`} green />
                     <StatBox label="SELL FOR" value={`$${r.estimated_sell_price.toLocaleString()}`} />
                     <StatBox label="TIME TO SELL" value={r.days_to_sell_estimate} />
                     <StatBox label="SCORE" value={`${r.score}/100`} />
