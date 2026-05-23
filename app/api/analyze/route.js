@@ -102,6 +102,139 @@ const REGIONAL_DATA = {
   },
 };
 
+// ─── City → region mapper ─────────────────────────────────────────────────────
+function mapCityToRegion(cityInput) {
+  if (!cityInput) return null;
+  const s = cityInput.toLowerCase().trim();
+
+  // California split — check specific cities first before the state fallback
+  const soCal = ['los angeles','san diego','anaheim','long beach','irvine','riverside','santa ana','oxnard','ventura','santa barbara','palm springs','bakersfield','san bernardino','ontario','fontana'];
+  const noCal = ['san francisco','sacramento','san jose','oakland','fresno','stockton','modesto','santa rosa','berkeley','sf bay','bay area','redding','chico'];
+  for (const c of soCal) if (s.includes(c)) return 'Los Angeles / San Diego';
+  for (const c of noCal) if (s.includes(c)) return 'San Francisco / Sacramento';
+
+  const map = {
+    // Pacific Northwest
+    seattle:'Seattle / Portland', tacoma:'Seattle / Portland', portland:'Seattle / Portland',
+    spokane:'Seattle / Portland', eugene:'Seattle / Portland',
+    ' wa':'Seattle / Portland', ',wa':'Seattle / Portland', 'washington state':'Seattle / Portland',
+    ' or ':'Seattle / Portland', ',or':'Seattle / Portland', ' oregon':'Seattle / Portland',
+
+    // Southwest Desert
+    phoenix:'Phoenix / Las Vegas', 'las vegas':'Phoenix / Las Vegas', tucson:'Phoenix / Las Vegas',
+    henderson:'Phoenix / Las Vegas', scottsdale:'Phoenix / Las Vegas', mesa:'Phoenix / Las Vegas',
+    tempe:'Phoenix / Las Vegas', chandler:'Phoenix / Las Vegas', reno:'Phoenix / Las Vegas',
+    ' az':'Phoenix / Las Vegas', ',az':'Phoenix / Las Vegas', ' arizona':'Phoenix / Las Vegas',
+    ' nv':'Phoenix / Las Vegas', ',nv':'Phoenix / Las Vegas', ' nevada':'Phoenix / Las Vegas',
+
+    // Texas
+    dallas:'Dallas / Houston / Austin', houston:'Dallas / Houston / Austin', austin:'Dallas / Houston / Austin',
+    'san antonio':'Dallas / Houston / Austin', 'fort worth':'Dallas / Houston / Austin',
+    'el paso':'Dallas / Houston / Austin', lubbock:'Dallas / Houston / Austin', plano:'Dallas / Houston / Austin',
+    ' tx':'Dallas / Houston / Austin', ',tx':'Dallas / Houston / Austin', ' texas':'Dallas / Houston / Austin',
+
+    // Southeast
+    atlanta:'Atlanta / Nashville', nashville:'Atlanta / Nashville', charlotte:'Atlanta / Nashville',
+    birmingham:'Atlanta / Nashville', memphis:'Atlanta / Nashville', raleigh:'Atlanta / Nashville',
+    durham:'Atlanta / Nashville', richmond:'Atlanta / Nashville', louisville:'Atlanta / Nashville',
+    knoxville:'Atlanta / Nashville', chattanooga:'Atlanta / Nashville', greensboro:'Atlanta / Nashville',
+    columbia:'Atlanta / Nashville', jackson:'Atlanta / Nashville', 'little rock':'Atlanta / Nashville',
+    ' ga':'Atlanta / Nashville', ',ga':'Atlanta / Nashville', ' georgia':'Atlanta / Nashville',
+    ' tn':'Atlanta / Nashville', ',tn':'Atlanta / Nashville', ' tennessee':'Atlanta / Nashville',
+    ' al':'Atlanta / Nashville', ',al':'Atlanta / Nashville', ' alabama':'Atlanta / Nashville',
+    ' sc':'Atlanta / Nashville', ',sc':'Atlanta / Nashville', ' nc':'Atlanta / Nashville', ',nc':'Atlanta / Nashville',
+    ' ms':'Atlanta / Nashville', ',ms':'Atlanta / Nashville', ' ar':'Atlanta / Nashville', ',ar':'Atlanta / Nashville',
+    ' ky':'Atlanta / Nashville', ',ky':'Atlanta / Nashville', ' kentucky':'Atlanta / Nashville',
+    ' wv':'Atlanta / Nashville', ',wv':'Atlanta / Nashville',
+
+    // Florida
+    miami:'Miami / Tampa / Orlando', tampa:'Miami / Tampa / Orlando', orlando:'Miami / Tampa / Orlando',
+    jacksonville:'Miami / Tampa / Orlando', 'fort lauderdale':'Miami / Tampa / Orlando',
+    'st. pete':'Miami / Tampa / Orlando', 'st pete':'Miami / Tampa / Orlando',
+    tallahassee:'Miami / Tampa / Orlando', pensacola:'Miami / Tampa / Orlando',
+    ' fl':'Miami / Tampa / Orlando', ',fl':'Miami / Tampa / Orlando', ' florida':'Miami / Tampa / Orlando',
+
+    // Midwest / Great Lakes
+    chicago:'Chicago / Detroit', detroit:'Chicago / Detroit', indianapolis:'Chicago / Detroit',
+    columbus:'Chicago / Detroit', cleveland:'Chicago / Detroit', milwaukee:'Chicago / Detroit',
+    cincinnati:'Chicago / Detroit', toledo:'Chicago / Detroit', akron:'Chicago / Detroit',
+    'grand rapids':'Chicago / Detroit', lansing:'Chicago / Detroit',
+    ' il':'Chicago / Detroit', ',il':'Chicago / Detroit', ' illinois':'Chicago / Detroit',
+    ' mi':'Chicago / Detroit', ',mi':'Chicago / Detroit', ' michigan':'Chicago / Detroit',
+    ' in':'Chicago / Detroit', ',in':'Chicago / Detroit', ' indiana':'Chicago / Detroit',
+    ' oh':'Chicago / Detroit', ',oh':'Chicago / Detroit', ' ohio':'Chicago / Detroit',
+    ' wi':'Chicago / Detroit', ',wi':'Chicago / Detroit', ' wisconsin':'Chicago / Detroit',
+
+    // Upper Midwest / Plains
+    minneapolis:'Minneapolis / Kansas City', 'kansas city':'Minneapolis / Kansas City',
+    'st. louis':'Minneapolis / Kansas City', 'st louis':'Minneapolis / Kansas City',
+    omaha:'Minneapolis / Kansas City', tulsa:'Minneapolis / Kansas City',
+    'oklahoma city':'Minneapolis / Kansas City', wichita:'Minneapolis / Kansas City',
+    'des moines':'Minneapolis / Kansas City', sioux:'Minneapolis / Kansas City',
+    fargo:'Minneapolis / Kansas City', 'st. paul':'Minneapolis / Kansas City',
+    ' mn':'Minneapolis / Kansas City', ',mn':'Minneapolis / Kansas City',
+    ' ia':'Minneapolis / Kansas City', ',ia':'Minneapolis / Kansas City',
+    ' mo':'Minneapolis / Kansas City', ',mo':'Minneapolis / Kansas City',
+    ' ks':'Minneapolis / Kansas City', ',ks':'Minneapolis / Kansas City',
+    ' ne':'Minneapolis / Kansas City', ',ne':'Minneapolis / Kansas City',
+    ' sd':'Minneapolis / Kansas City', ',sd':'Minneapolis / Kansas City',
+    ' nd':'Minneapolis / Kansas City', ',nd':'Minneapolis / Kansas City',
+    ' ok':'Minneapolis / Kansas City', ',ok':'Minneapolis / Kansas City',
+
+    // Mountain West
+    denver:'Denver / Salt Lake City', 'salt lake city':'Denver / Salt Lake City',
+    slc:'Denver / Salt Lake City', 'salt lake':'Denver / Salt Lake City',
+    'colorado springs':'Denver / Salt Lake City', boulder:'Denver / Salt Lake City',
+    albuquerque:'Denver / Salt Lake City', boise:'Denver / Salt Lake City',
+    billings:'Denver / Salt Lake City', missoula:'Denver / Salt Lake City',
+    'santa fe':'Denver / Salt Lake City', provo:'Denver / Salt Lake City',
+    ' co':'Denver / Salt Lake City', ',co':'Denver / Salt Lake City', ' colorado':'Denver / Salt Lake City',
+    ' ut':'Denver / Salt Lake City', ',ut':'Denver / Salt Lake City', ' utah':'Denver / Salt Lake City',
+    ' wy':'Denver / Salt Lake City', ',wy':'Denver / Salt Lake City', ' wyoming':'Denver / Salt Lake City',
+    ' mt':'Denver / Salt Lake City', ',mt':'Denver / Salt Lake City', ' montana':'Denver / Salt Lake City',
+    ' id':'Denver / Salt Lake City', ',id':'Denver / Salt Lake City', ' idaho':'Denver / Salt Lake City',
+    ' nm':'Denver / Salt Lake City', ',nm':'Denver / Salt Lake City', ' new mexico':'Denver / Salt Lake City',
+
+    // Mid-Atlantic
+    'new york':'New York / DC / Philadelphia', nyc:'New York / DC / Philadelphia',
+    brooklyn:'New York / DC / Philadelphia', bronx:'New York / DC / Philadelphia',
+    queens:'New York / DC / Philadelphia', philadelphia:'New York / DC / Philadelphia',
+    philly:'New York / DC / Philadelphia', washington:'New York / DC / Philadelphia',
+    baltimore:'New York / DC / Philadelphia', pittsburgh:'New York / DC / Philadelphia',
+    newark:'New York / DC / Philadelphia', 'jersey city':'New York / DC / Philadelphia',
+    norfolk:'New York / DC / Philadelphia', 'virginia beach':'New York / DC / Philadelphia',
+    arlington:'New York / DC / Philadelphia', trenton:'New York / DC / Philadelphia',
+    ' ny':'New York / DC / Philadelphia', ',ny':'New York / DC / Philadelphia',
+    ' nj':'New York / DC / Philadelphia', ',nj':'New York / DC / Philadelphia', ' new jersey':'New York / DC / Philadelphia',
+    ' pa':'New York / DC / Philadelphia', ',pa':'New York / DC / Philadelphia', ' pennsylvania':'New York / DC / Philadelphia',
+    ' md':'New York / DC / Philadelphia', ',md':'New York / DC / Philadelphia', ' maryland':'New York / DC / Philadelphia',
+    ' dc':'New York / DC / Philadelphia', ' va':'New York / DC / Philadelphia', ',va':'New York / DC / Philadelphia', ' virginia':'New York / DC / Philadelphia',
+    ' de':'New York / DC / Philadelphia', ',de':'New York / DC / Philadelphia', ' delaware':'New York / DC / Philadelphia',
+
+    // New England
+    boston:'Boston / Providence', providence:'Boston / Providence', hartford:'Boston / Providence',
+    springfield:'Boston / Providence', worcester:'Boston / Providence',
+    'new haven':'Boston / Providence', bridgeport:'Boston / Providence',
+    manchester:'Boston / Providence', portland:'Boston / Providence',
+    ' ma':'Boston / Providence', ',ma':'Boston / Providence', ' massachusetts':'Boston / Providence',
+    ' ct':'Boston / Providence', ',ct':'Boston / Providence', ' connecticut':'Boston / Providence',
+    ' ri':'Boston / Providence', ',ri':'Boston / Providence', ' rhode island':'Boston / Providence',
+    ' nh':'Boston / Providence', ',nh':'Boston / Providence', ' new hampshire':'Boston / Providence',
+    ' vt':'Boston / Providence', ',vt':'Boston / Providence', ' vermont':'Boston / Providence',
+    ' me':'Boston / Providence', ',me':'Boston / Providence', ' maine':'Boston / Providence',
+
+    // California fallback (if just "ca" or "california" with no city hint)
+    ' ca':'Los Angeles / San Diego', ',ca':'Los Angeles / San Diego', ' california':'Los Angeles / San Diego',
+  };
+
+  // Pad the string so state-code patterns (" tx") match at the start too
+  const padded = ' ' + s;
+  for (const [key, region] of Object.entries(map)) {
+    if (padded.includes(key)) return region;
+  }
+  return null;
+}
+
 // ─── Seasonal guidance by market type ────────────────────────────────────────
 function getSeasonalGuidance(monthNum, season) {
   if (season === 'year-round') {
@@ -188,7 +321,7 @@ Weight photo findings as heavily as the written description. If photos reveal da
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { year, make, model, price, mileage, condition, titleStatus, description, listingUrl, images, region } = body;
+    const { year, make, model, price, mileage, condition, titleStatus, description, listingUrl, images, city } = body;
 
     if (!make || !model || !price) {
       return Response.json({ error: 'Make, model, and price are required.' }, { status: 400 });
@@ -196,7 +329,7 @@ export async function POST(request) {
 
     const hasImages = images && images.length > 0;
     const { month, year: currentYear, monthNum } = getDateContext();
-    const regionKey = region && REGIONAL_DATA[region] ? region : null;
+    const regionKey = city ? mapCityToRegion(city) : null;
 
     const systemPrompt = buildSystemPrompt(regionKey, monthNum, month, currentYear);
 
@@ -216,7 +349,7 @@ Listing:
 - Title status: ${titleStatus || 'NOT PROVIDED — flag as unknown, add to inspect_checklist'}
 - Description/notes: ${description || 'none provided'}
 ${listingUrl ? `- Listing URL: ${listingUrl}` : ''}
-${regionKey ? `- Buyer's region: ${regionKey}` : '- Region: not specified (use national avg)'}
+${city ? `- Buyer's location: ${city}` : '- Location: not specified (use national avg)'}${regionKey ? ` (${regionKey} market)` : ''}
 
 Return exactly this JSON and nothing else:
 {

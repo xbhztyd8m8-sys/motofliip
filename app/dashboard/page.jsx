@@ -7,20 +7,6 @@ import { createClient } from '@/lib/supabase';
 const MAKES = ['Honda','Yamaha','Kawasaki','Suzuki','Harley-Davidson','BMW','KTM','Ducati','Triumph','Royal Enfield','Indian','Other'];
 const CONDITIONS = ['Excellent','Good','Fair','Poor / project','Non-running'];
 const TITLE_STATUSES = ['Clean title','Salvage title','Rebuilt/reconstructed title','No title (bill of sale only)','Title in hand — not yet transferred'];
-const REGIONS = [
-  'Los Angeles / San Diego',
-  'San Francisco / Sacramento',
-  'Seattle / Portland',
-  'Phoenix / Las Vegas',
-  'Dallas / Houston / Austin',
-  'Atlanta / Nashville',
-  'Miami / Tampa / Orlando',
-  'Chicago / Detroit',
-  'Minneapolis / Kansas City',
-  'Denver / Salt Lake City',
-  'New York / DC / Philadelphia',
-  'Boston / Providence',
-];
 
 const EXAMPLE_LISTING = {
   year: '2019',
@@ -30,7 +16,7 @@ const EXAMPLE_LISTING = {
   mileage: '9400',
   condition: 'Good',
   titleStatus: 'Clean title',
-  region: 'Atlanta / Nashville',
+  city: 'Nashville, TN',
   description: 'Single owner, garage kept. Recent oil change and new chain. Small scratch on the tank from a tip-over in the driveway.',
 };
 
@@ -81,7 +67,7 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  const [form, setForm] = useState({ year: '', make: '', model: '', price: '', mileage: '', condition: '', titleStatus: '', region: '', description: '', listingUrl: '' });
+  const [form, setForm] = useState({ year: '', make: '', model: '', price: '', mileage: '', condition: '', titleStatus: '', city: '', description: '', listingUrl: '' });
   const [photos, setPhotos] = useState([]); // [{ preview, base64, mediaType }]
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -309,7 +295,7 @@ export default function Dashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          region: form.region || null,
+          city: form.city || null,
           titleStatus: form.titleStatus || null,
           images: photos.map(p => ({ base64: p.base64, mediaType: p.mediaType })),
         }),
@@ -323,7 +309,7 @@ export default function Dashboard() {
         askPrice: parseInt(form.price),
         mileage: form.mileage,
         listingUrl: form.listingUrl || '',
-        region: form.region || null,
+        city: form.city || null,
         titleStatus: form.titleStatus || null,
         photos: photos.map(p => p.preview),
       });
@@ -414,7 +400,12 @@ export default function Dashboard() {
                 className="mf-btn-primary"
                 style={{ background: '#e8ff47', color: '#0a0a0a', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: '700', fontFamily: 'monospace', cursor: upgrading ? 'not-allowed' : 'pointer', border: 'none' }}
               >
-                {upgrading ? 'Loading…' : 'Upgrade to Pro'}
+                {upgrading ? 'Loading…' : (
+                  <>
+                    <span className="mf-upgrade-label-full">Upgrade to Pro</span>
+                    <span className="mf-upgrade-label-short">Upgrade</span>
+                  </>
+                )}
               </button>
               {upgradeError && (
                 <div style={{ fontSize: '12px', color: '#f87171', maxWidth: '180px', lineHeight: 1.4 }}>
@@ -714,11 +705,14 @@ export default function Dashboard() {
                 </select>
               </div>
               <div>
-                <label style={labelStyle}>YOUR REGION <span style={{ color: '#555' }}>— affects pricing</span></label>
-                <select style={inputStyle} value={form.region} onChange={e => set('region', e.target.value)}>
-                  <option value="">Select region…</option>
-                  {REGIONS.map(r => <option key={r}>{r}</option>)}
-                </select>
+                <label style={labelStyle}>YOUR CITY <span style={{ color: '#555' }}>— affects pricing</span></label>
+                <input
+                  style={inputStyle}
+                  type="text"
+                  placeholder="e.g. Birmingham, AL"
+                  value={form.city}
+                  onChange={e => set('city', e.target.value)}
+                />
               </div>
             </div>
 
@@ -875,10 +869,10 @@ export default function Dashboard() {
                         <> · <a href={result.listingUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#e8ff47', textDecoration: 'none' }}>View listing →</a></>
                       )}
                     </div>
-                    {(result.region || result.titleStatus) && (
+                    {(result.city || result.titleStatus) && (
                       <div style={{ fontSize: '11px', color: '#444', fontFamily: 'monospace', marginTop: '4px', letterSpacing: '0.02em' }}>
-                        {result.region && <span>{result.region}</span>}
-                        {result.region && result.titleStatus && <span> · </span>}
+                        {result.city && <span>{result.city}</span>}
+                        {result.city && result.titleStatus && <span> · </span>}
                         {result.titleStatus && <span>{result.titleStatus}</span>}
                       </div>
                     )}
