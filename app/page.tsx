@@ -129,8 +129,9 @@ export default function Home() {
           fontFamily: 'sans-serif',
           fontWeight: '400',
         }}>
-          MotoFlip analyzes motorcycle listings in seconds — flip score, profit estimate,
-          negotiation tips, and red flags. Right on Marketplace while you browse.
+          What used to take an hour of research — comps, pricing, red flags — now takes
+          2 seconds. Paste any listing and get a flip score, suggested offer, and profit
+          estimate before the seller even replies.
         </p>
 
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -190,7 +191,7 @@ export default function Home() {
             fontSize: '13px',
             color: '#666',
           }}>
-            <span>⚡ Analysis in ~2 seconds</span>
+            <span>⚡ 2 seconds vs. an hour of research</span>
             <span style={{ color: '#2a2a2a' }}>·</span>
             <span>🇺🇸 Trained on US used-bike market data</span>
             <span style={{ color: '#2a2a2a' }}>·</span>
@@ -414,7 +415,7 @@ export default function Home() {
             marginTop: '3rem',
           }}>
             {[
-              { icon: '⚡', title: '~2 second analysis', body: 'AI runs the moment you click. No waiting, no loading screens.' },
+              { icon: '⚡', title: '2 seconds, not an hour', body: 'AI runs the moment you click. What used to take manual research now happens instantly.' },
               { icon: '🔍', title: 'Stays on the listing', body: 'No new tabs. The panel overlays the page so you never lose your place.' },
               { icon: '💾', title: 'Save with one click', body: 'Hot deal? Save it straight to your pipeline without leaving the listing.' },
               { icon: '🔒', title: 'Free to install', body: 'The extension will be free. Pro subscription unlocks unlimited analyses.' },
@@ -479,9 +480,9 @@ export default function Home() {
                 marginBottom: '1.25rem',
               }}>
                 I&apos;ve been buying and selling motorcycles for years.
-                Every deal started the same way — hours of scrolling, checking comps, guessing
-                at margins, and hoping I wasn&apos;t leaving money on the table. I built MotoFlip
-                because I was tired of guessing.
+                Every deal started the same way — an hour of scrolling, manually checking comps,
+                guessing at margins, and hoping I wasn&apos;t leaving money on the table.
+                I built MotoFlip to cut that down to seconds.
               </p>
               <p style={{
                 fontSize: '15px',
@@ -522,7 +523,7 @@ export default function Home() {
           {[
             { n: '01', title: 'Browse like normal', body: 'Go to Facebook Marketplace or Craigslist and search for motorcycles like you always do.' },
             { n: '02', title: 'Click the MotoFlip button', body: 'Our Chrome extension puts a button on every listing. One click and the analysis runs instantly.' },
-            { n: '03', title: 'Get your flip score', body: 'See the flip score, suggested offer price, estimated profit, and any red flags — in about 2 seconds.' },
+            { n: '03', title: 'Get your flip score', body: 'In about 2 seconds you\'ll see the flip score, suggested offer, estimated profit, and red flags. No comp hunting. No guessing.' },
             { n: '04', title: 'Save the best ones', body: 'Add hot listings to your pipeline. Track everything in one dashboard. Never lose a deal.' },
           ].map(({ n, title, body }) => (
             <FadeIn key={n}>

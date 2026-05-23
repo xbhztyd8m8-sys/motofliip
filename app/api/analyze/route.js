@@ -4,6 +4,16 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: CORS_HEADERS });
+}
+
 export const maxDuration = 60;
 
 function getDateContext() {
@@ -324,7 +334,7 @@ export async function POST(request) {
     const { year, make, model, price, mileage, condition, titleStatus, description, listingUrl, images, city } = body;
 
     if (!make || !model || !price) {
-      return Response.json({ error: 'Make, model, and price are required.' }, { status: 400 });
+      return Response.json({ error: 'Make, model, and price are required.' }, { status: 400, headers: CORS_HEADERS });
     }
 
     const hasImages = images && images.length > 0;
@@ -399,10 +409,10 @@ Return exactly this JSON and nothing else:
     if (!result.confidence) result.confidence = 'Medium';
     if (!result.inspect_checklist) result.inspect_checklist = [];
 
-    return Response.json(result);
+    return Response.json(result, { headers: CORS_HEADERS });
 
   } catch (error) {
     console.error('Analysis error:', error);
-    return Response.json({ error: 'Analysis failed. Please try again.' }, { status: 500 });
+    return Response.json({ error: 'Analysis failed. Please try again.' }, { status: 500, headers: CORS_HEADERS });
   }
 }
